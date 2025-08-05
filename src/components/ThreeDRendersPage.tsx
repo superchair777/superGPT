@@ -170,7 +170,7 @@ const ThreeDRendersPage: React.FC = () => {
               style={{ transform: `scale(${zoom / 100})` }}
             >
               <img 
-                src={`https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop`}
+                src="/3d-render-placeholder.png"
                 alt={`3D Render ${currentRender}`}
                 className={`w-full h-auto max-w-4xl transition-transform duration-1000 ${
                   isRotating ? 'animate-spin' : ''

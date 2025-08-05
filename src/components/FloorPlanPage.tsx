@@ -142,7 +142,7 @@ const FloorPlanPage: React.FC = () => {
               style={{ transform: `scale(${zoom / 100})` }}
             >
               <img 
-                src={`https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop`}
+                src="/floorplan-placeholder.png"
                 alt={`Floor plan ${currentImage}`}
                 className="w-full h-auto max-w-2xl"
               />
