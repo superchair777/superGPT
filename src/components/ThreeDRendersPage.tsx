@@ -83,7 +83,7 @@ const ThreeDRendersPage: React.FC = () => {
       
       <div className="flex-1 flex gap-6 p-6 overflow-hidden">
         {/* Main 3D Viewer */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           {/* Viewer Header */}
           <div className={`flex items-center justify-between p-4 rounded-t-xl border-b ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-gray-50 border-gray-200'
@@ -160,13 +160,13 @@ const ThreeDRendersPage: React.FC = () => {
           </div>
 
           {/* 3D Render Display */}
-          <div className={`flex-1 flex items-center justify-center p-8 rounded-b-xl border-l border-r border-b ${
+          <div className={`flex-1 flex items-center justify-center p-4 rounded-b-xl border-l border-r border-b min-h-0 ${
             isDark ? 'bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border-gray-600' : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200'
           }`}>
             <div 
               className={`relative rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 ${
                 isRotating ? 'animate-pulse' : ''
-              }`}
+              } max-w-full max-h-full`}
               style={{ transform: `scale(${zoom / 100})` }}
             >
               <img 
@@ -174,7 +174,7 @@ const ThreeDRendersPage: React.FC = () => {
                 alt={`3D Render ${currentRender}`}
                 className={`w-full h-auto max-w-4xl transition-transform duration-1000 ${
                   isRotating ? 'animate-spin' : ''
-                }`}
+                } max-h-[60vh] object-contain`}
                 style={{ animationDuration: isRotating ? '10s' : '0s' }}
               />
               <div className="absolute top-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-xl">
@@ -192,15 +192,15 @@ const ThreeDRendersPage: React.FC = () => {
           </div>
 
           {/* Bottom Controls */}
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex items-center justify-between mt-4 flex-shrink-0">
             <div className="flex items-center gap-4">
               <button
                 onClick={handlePrevRender}
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={18} />
               </button>
               <div className={`px-4 py-2 rounded-lg ${
                 isDark ? 'bg-[#2f2f2f] text-gray-300' : 'bg-white text-gray-700 border'
@@ -209,30 +209,30 @@ const ThreeDRendersPage: React.FC = () => {
               </div>
               <button
                 onClick={handleNextRender}
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </button>
             </div>
 
             <div className="flex items-center gap-2">
               <button
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
                 title="Fullscreen"
               >
-                <Maximize2 size={20} />
+                <Maximize2 size={18} />
               </button>
               <button
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
                 title="Download"
               >
-                <Download size={20} />
+                <Download size={18} />
               </button>
             </div>
           </div>
@@ -241,7 +241,7 @@ const ThreeDRendersPage: React.FC = () => {
         {/* Right Sidebar - Chat Interface */}
         <div className={`w-96 flex flex-col rounded-xl border ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
-        } shadow-lg`}>
+        } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
             <h3 className={`text-lg font-semibold flex items-center gap-2 ${
               isDark ? 'text-white' : 'text-gray-900'
@@ -254,7 +254,7 @@ const ThreeDRendersPage: React.FC = () => {
             </p>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             {messages.length === 0 ? (
               <div className="text-center py-12">
                 <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
@@ -299,7 +299,7 @@ const ThreeDRendersPage: React.FC = () => {
             )}
           </div>
           
-          <div className={`p-4 border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+          <div className={`p-4 border-t flex-shrink-0 ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
             <ChatInput
               message={message}
               setMessage={setMessage}

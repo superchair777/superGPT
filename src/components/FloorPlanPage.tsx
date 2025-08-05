@@ -65,7 +65,7 @@ const FloorPlanPage: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex gap-6 p-6 overflow-hidden min-h-0">
         {/* Left Column: Floor Plan Viewer */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           {/* Toolbar */}
           <div className={`flex items-center justify-between p-4 rounded-t-xl border-b ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-gray-50 border-gray-200'
@@ -134,17 +134,17 @@ const FloorPlanPage: React.FC = () => {
           </div>
 
           {/* Floor Plan Display */}
-          <div className={`flex-1 flex items-center justify-center p-8 rounded-b-xl border-l border-r border-b ${
+          <div className={`flex-1 flex items-center justify-center p-4 rounded-b-xl border-l border-r border-b min-h-0 ${
             isDark ? 'bg-[#1a1a1a] border-gray-600' : 'bg-gray-50 border-gray-200'
           }`}>
             <div 
-              className="relative bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300"
+              className="relative bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 max-w-full max-h-full"
               style={{ transform: `scale(${zoom / 100})` }}
             >
               <img 
                 src="/floorplan-placeholder.png"
                 alt={`Floor plan ${currentImage}`}
-                className="w-full h-auto max-w-2xl"
+                className="w-full h-auto max-w-3xl max-h-[60vh] object-contain"
               />
               <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
                 Plan {currentImage}
@@ -153,10 +153,10 @@ const FloorPlanPage: React.FC = () => {
           </div>
 
           {/* Controls */}
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex items-center justify-between mt-4 flex-shrink-0">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-lg hover:shadow-xl"
+              className="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md hover:shadow-lg"
             >
               {t('floorPlan.generateButton')}
             </button>
@@ -164,11 +164,11 @@ const FloorPlanPage: React.FC = () => {
             <div className="flex items-center gap-4">
               <button
                 onClick={handlePrevImage}
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={18} />
               </button>
               <div className={`px-4 py-2 rounded-lg ${
                 isDark ? 'bg-[#2f2f2f] text-gray-300' : 'bg-white text-gray-700 border'
@@ -177,31 +177,31 @@ const FloorPlanPage: React.FC = () => {
               </div>
               <button
                 onClick={handleNextImage}
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </button>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsFullscreen(!isFullscreen)}
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
                 title="Fullscreen"
               >
-                <Maximize2 size={20} />
+                <Maximize2 size={18} />
               </button>
               <button
-                className={`p-3 rounded-xl transition-colors shadow-md ${
+                className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
                 title="Download"
               >
-                <Download size={20} />
+                <Download size={18} />
               </button>
             </div>
           </div>
@@ -210,7 +210,7 @@ const FloorPlanPage: React.FC = () => {
         {/* Right Column: Chat Interface */}
         <div className={`w-96 flex flex-col rounded-xl border ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
-        } shadow-lg`}>
+        } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
             <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Design Assistant
@@ -220,7 +220,7 @@ const FloorPlanPage: React.FC = () => {
             </p>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             {messages.length === 0 ? (
               <div className="text-center py-8">
                 <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
@@ -239,7 +239,7 @@ const FloorPlanPage: React.FC = () => {
             )}
           </div>
           
-          <div className={`p-4 border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+          <div className={`p-4 border-t flex-shrink-0 ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
             <ChatInput
               message={message}
               setMessage={setMessage}
