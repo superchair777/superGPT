@@ -1,0 +1,178 @@
+import React, { useState, useEffect } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useChat } from '../contexts/ChatContext';
+import ChatMessage from './ChatMessage';
+import ChatInput from './ChatInput';
+import Header from './Header';
+import {
+  Image,
+  FileText,
+  PenTool,
+  MoreHorizontal,
+  Code,
+  Lightbulb,
+  Eye,
+  GraduationCap,
+  ClipboardList,
+} from 'lucide-react';
+
+interface ChatAreaProps {
+  sidebarOpen: boolean;
+}
+
+interface Message {
+  text: string;
+  sender: 'user' | 'bot';
+}
+
+const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
+  const { isDark } = useTheme();
+  const { t } = useLanguage();
+  const { messages: allMessages, sendMessage } = useChat();
+  const sessionId = 'main';
+  const messages = allMessages[sessionId] || [];
+  const [message, setMessage] = useState('');
+  const [showMoreDropdown, setShowMoreDropdown] = useState(false);
+
+  const allActions = [
+    { icon: Image, label: t('actions.createImage'), color: 'text-green-400' },
+    { icon: PenTool, label: t('actions.helpWrite'), color: 'text-purple-400' },
+    { icon: FileText, label: t('actions.summarizeText'), color: 'text-orange-400' },
+    { icon: Eye, label: t('actions.analyzeImages'), color: 'text-blue-400' },
+    { icon: GraduationCap, label: t('actions.getAdvice'), color: 'text-cyan-400' },
+    { icon: Code, label: t('actions.code'), color: 'text-indigo-400' },
+    { icon: ClipboardList, label: t('actions.makePlan'), color: 'text-yellow-400' },
+    { icon: Lightbulb, label: t('more.brainstorm'), color: 'text-pink-400' },
+  ];
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim()) {
+      const newMessage: Message = { text: message, sender: 'user' };
+      sendMessage(sessionId, newMessage);
+      setMessage('');
+
+      // Mock bot response
+      setTimeout(() => {
+        const botMessage: Message = {
+          text: `
+            <p>Becoming a developer is a mix of learning, building, and consistency. Here's a clear path that works well for most people:</p>
+            <h3>1. Pick a Starting Path</h3>
+            <p>Decide what kind of developer you want to be:</p>
+            <ul>
+              <li><strong>Web Developer</strong> (Front-end, Back-end, Full-stack)</li>
+              <li><strong>Mobile App Developer</strong> (iOS, Android, Flutter)</li>
+              <li><strong>Game Developer</strong> (Unity, Unreal Engine)</li>
+              <li><strong>Data/AI Developer</strong> (Python, ML, data science)</li>
+              <li><strong>Software Engineer</strong> (general-purpose apps/tools)</li>
+            </ul>
+            <p>If you're not sure, start with web development. It's beginner-friendly and highly employable.</p>
+            <h3>2. Learn the Fundamentals</h3>
+            <p>Regardless of your path, you need to understand:</p>
+            <ul>
+              <li><strong>Programming basics</strong> (variables, loops, functions, data structures)</li>
+              <li>Choose a beginner-friendly language:
+                <ul>
+                  <li><strong>JavaScript</strong> for web</li>
+                  <li><strong>Python</strong> for general-purpose, AI, or automation</li>
+                  <li><strong>Java/Kotlin</strong> for Android</li>
+                  <li><strong>Swift</strong> for iOS</li>
+                </ul>
+              </li>
+            </ul>
+          `,
+          sender: 'bot',
+        };
+        sendMessage(sessionId, botMessage);
+      }, 1000);
+    }
+  };
+
+  const handleMoreClick = () => {
+    setShowMoreDropdown(!showMoreDropdown);
+  };
+
+  const handleOptionClick = (option: string) => {
+    console.log('Selected option:', option);
+    setShowMoreDropdown(false);
+  };
+  return (
+    <div className={`
+      flex-1 flex flex-col transition-all duration-300
+      ${isDark ? 'bg-[#212121]' : 'bg-white'}
+      ${sidebarOpen ? 'lg:ml-0' : 'lg:ml-0'}
+    `}>
+      <Header sessionId={sessionId} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+        <div className={`flex-1 flex flex-col overflow-hidden ${messages.length === 0 ? 'justify-center' : ''}`}>
+          {messages.length > 0 ? (
+            <div className="flex-1 overflow-y-auto p-6">
+              {messages.map((msg, index) => (
+                <ChatMessage key={index} message={msg} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center p-6">
+              {/* Welcome Message */}
+              <div className="text-center mb-8">
+                <h1 className={`text-3xl md:text-4xl font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('chat.welcomeMessage')}
+                </h1>
+              </div>
+              {/* Quick Actions */}
+              <div className="flex flex-col items-center gap-3 mt-6">
+                <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 transition-all duration-300 ease-in-out w-full ${showMoreDropdown ? 'max-h-[1000px]' : 'max-h-[5rem]'} overflow-hidden`}>
+                  {allActions.slice(0, showMoreDropdown ? allActions.length : 5).map((action, index) => (
+                    <button
+                      key={index}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors border ${
+                        isDark
+                          ? 'bg-[#2f2f2f] hover:bg-[#3f3f3f] text-gray-300 hover:text-white border-gray-600 hover:border-gray-500'
+                          : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-900 border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <action.icon size={16} className={action.color} />
+                      <span className="text-sm">{action.label}</span>
+                    </button>
+                  ))}
+                </div>
+                {!showMoreDropdown && (
+                  <button
+                    onClick={handleMoreClick}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors border ${
+                      isDark
+                        ? 'bg-[#2f2f2f] hover:bg-[#3f3f3f] text-gray-300 hover:text-white border-gray-600 hover:border-gray-500'
+                        : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-900 border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <MoreHorizontal size={16} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
+                    <span className="text-sm">{t('actions.more')}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Chat Input and Footer Section */}
+        <div className={`px-6 pb-6 pt-2 shrink-0 transition-all duration-500 ease-in-out ${messages.length > 0 ? 'mt-0' : '-mt-16'}`}>
+          <ChatInput
+            message={message}
+            setMessage={setMessage}
+            handleSendMessage={handleSendMessage}
+          />
+          <div className="mt-2 text-center">
+            <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
+              {t('chat.disclaimer')}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ChatArea;
