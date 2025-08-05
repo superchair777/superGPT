@@ -5,10 +5,10 @@ import { useChat } from '../contexts/ChatContext';
 import Header from './Header';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
+import CustomizationModal from './CustomizationModal';
 import { 
   ChevronLeft, 
   ChevronRight, 
-  Expand, 
   Download, 
   RotateCcw, 
   ZoomIn, 
@@ -16,11 +16,9 @@ import {
   Maximize2,
   Play,
   Pause,
-  RotateCw,
-  Lightbulb,
-  Palette,
   Settings,
-  Eye
+  Eye,
+  Palette
 } from 'lucide-react';
 
 const ThreeDRendersPage: React.FC = () => {
@@ -35,10 +33,9 @@ const ThreeDRendersPage: React.FC = () => {
   const [zoom, setZoom] = useState(100);
   const [selectedMaterial, setSelectedMaterial] = useState('wood');
   const [selectedLighting, setSelectedLighting] = useState('natural');
+  const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
 
   const totalRenders = 4;
-  const materials = ['wood', 'metal', 'fabric', 'leather'];
-  const lightingOptions = ['natural', 'warm', 'cool', 'dramatic'];
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +102,17 @@ const ThreeDRendersPage: React.FC = () => {
             {/* Viewer Controls */}
             <div className="flex items-center gap-2">
               <button
+                onClick={() => setIsCustomizationOpen(true)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+                title="Customization"
+              >
+                <Palette size={18} />
+                <span className="text-sm font-medium">Customize</span>
+              </button>
+              <div className="w-px h-6 bg-gray-300 mx-2" />
+              <button
                 onClick={handleZoomOut}
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
@@ -164,7 +172,7 @@ const ThreeDRendersPage: React.FC = () => {
               <img 
                 src={`https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=900&h=600&fit=crop`}
                 alt={`3D Render ${currentRender}`}
-                className={`w-full h-auto max-w-3xl transition-transform duration-1000 ${
+                className={`w-full h-auto max-w-4xl transition-transform duration-1000 ${
                   isRotating ? 'animate-spin' : ''
                 }`}
                 style={{ animationDuration: isRotating ? '10s' : '0s' }}
@@ -230,118 +238,85 @@ const ThreeDRendersPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="w-80 flex flex-col gap-4">
-          {/* Material & Lighting Controls */}
-          <div className={`rounded-xl border p-4 ${
-            isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
-          } shadow-lg`}>
-            <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${
+        {/* Right Sidebar - Chat Interface */}
+        <div className={`w-96 flex flex-col rounded-xl border ${
+          isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
+        } shadow-lg`}>
+          <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+            <h3 className={`text-lg font-semibold flex items-center gap-2 ${
               isDark ? 'text-white' : 'text-gray-900'
             }`}>
-              <Palette size={20} />
-              Customization
+              <Eye size={20} />
+              Render Assistant
             </h3>
-            
-            {/* Materials */}
-            <div className="mb-4">
-              <label className={`block text-sm font-medium mb-2 ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Material
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {materials.map((material) => (
-                  <button
-                    key={material}
-                    onClick={() => setSelectedMaterial(material)}
-                    className={`p-3 rounded-lg text-sm font-medium transition-colors ${
-                      selectedMaterial === material
-                        ? 'bg-blue-600 text-white'
-                        : isDark
-                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
-                    {material.charAt(0).toUpperCase() + material.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Lighting */}
-            <div>
-              <label className={`block text-sm font-medium mb-2 flex items-center gap-2 ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                <Lightbulb size={16} />
-                Lighting
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {lightingOptions.map((lighting) => (
-                  <button
-                    key={lighting}
-                    onClick={() => setSelectedLighting(lighting)}
-                    className={`p-3 rounded-lg text-sm font-medium transition-colors ${
-                      selectedLighting === lighting
-                        ? 'bg-blue-600 text-white'
-                        : isDark
-                          ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
-                    {lighting.charAt(0).toUpperCase() + lighting.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Describe your 3D visualization needs
+            </p>
           </div>
-
-          {/* Chat Interface */}
-          <div className={`flex-1 flex flex-col rounded-xl border ${
-            isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
-          } shadow-lg`}>
-            <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-              <h3 className={`text-lg font-semibold flex items-center gap-2 ${
-                isDark ? 'text-white' : 'text-gray-900'
-              }`}>
-                <Eye size={20} />
-                Render Assistant
-              </h3>
-              <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                Describe your 3D visualization needs
-              </p>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
-                    isDark ? 'bg-gray-700' : 'bg-gray-100'
-                  }`}>
-                    <Settings size={24} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
-                  </div>
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Start a conversation to customize your 3D render
-                  </p>
+          
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.length === 0 ? (
+              <div className="text-center py-12">
+                <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                  isDark ? 'bg-gray-700' : 'bg-gray-100'
+                }`}>
+                  <Settings size={24} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
                 </div>
-              ) : (
-                messages.map((msg, index) => (
-                  <ChatMessage key={index} message={msg} />
-                ))
-              )}
-            </div>
-            
-            <div className={`p-4 border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-              <ChatInput
-                message={message}
-                setMessage={setMessage}
-                handleSendMessage={handleSendMessage}
-              />
-            </div>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Start a conversation to customize your 3D render
+                </p>
+                <div className="mt-6 space-y-2">
+                  <button
+                    onClick={() => setMessage("Create a modern living room with wooden furniture")}
+                    className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
+                      isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    💡 Create a modern living room with wooden furniture
+                  </button>
+                  <button
+                    onClick={() => setMessage("Change the lighting to warm and cozy")}
+                    className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
+                      isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    🔆 Change the lighting to warm and cozy
+                  </button>
+                  <button
+                    onClick={() => setMessage("Add more plants and natural elements")}
+                    className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
+                      isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    🌿 Add more plants and natural elements
+                  </button>
+                </div>
+              </div>
+            ) : (
+              messages.map((msg, index) => (
+                <ChatMessage key={index} message={msg} />
+              ))
+            )}
+          </div>
+          
+          <div className={`p-4 border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+            <ChatInput
+              message={message}
+              setMessage={setMessage}
+              handleSendMessage={handleSendMessage}
+            />
           </div>
         </div>
       </div>
+      
+      <CustomizationModal 
+        isOpen={isCustomizationOpen}
+        onClose={() => setIsCustomizationOpen(false)}
+        selectedMaterial={selectedMaterial}
+        setSelectedMaterial={setSelectedMaterial}
+        selectedLighting={selectedLighting}
+        setSelectedLighting={setSelectedLighting}
+      />
     </div>
   );
 };
