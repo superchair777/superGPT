@@ -451,6 +451,17 @@ const LibraryPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
+      <DeleteConfirmationModal
+        isOpen={showDelete}
+        onClose={() => setShowDelete(false)}
+        onConfirm={() => {
+          // Handle delete logic here
+          console.log('Delete library items');
+          setShowDelete(false);
+        }}
+      />
     </div>
   );
 };

@@ -317,6 +317,16 @@ const ThreeDRendersPage: React.FC = () => {
         selectedLighting={selectedLighting}
         setSelectedLighting={setSelectedLighting}
       />
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
+      <DeleteConfirmationModal
+        isOpen={showDelete}
+        onClose={() => setShowDelete(false)}
+        onConfirm={() => {
+          // Handle delete logic here
+          console.log('Delete 3D render');
+          setShowDelete(false);
+        }}
+      />
     </div>
   );
 };

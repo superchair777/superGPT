@@ -250,6 +250,16 @@ const FloorPlanPage: React.FC = () => {
       </div>
       
       <FloorPlanModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
+      <DeleteConfirmationModal
+        isOpen={showDelete}
+        onClose={() => setShowDelete(false)}
+        onConfirm={() => {
+          // Handle delete logic here
+          console.log('Delete floor plan');
+          setShowDelete(false);
+        }}
+      />
     </div>
   );
 };
