@@ -98,24 +98,21 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
     setShowMoreDropdown(false);
   };
   return (
-    <div className={`
-      flex-1 flex flex-col transition-all duration-300
-      ${isDark ? 'bg-[#212121]' : 'bg-white'}
-      ${sidebarOpen ? 'lg:ml-0' : 'lg:ml-0'}
-    `}>
+    <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
       <Header sessionId={sessionId} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-        <div className="flex-1 flex flex-col min-h-0">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full min-h-0">
+        {/* Messages Area */}
+        <div className="flex-1 min-h-0">
           {messages.length > 0 ? (
-            <div className="flex-1 overflow-y-auto p-6 min-h-0">
+            <div className="h-full overflow-y-auto p-6">
               {messages.map((msg, index) => (
                 <ChatMessage key={index} message={msg} />
               ))}
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center p-6">
+            <div className="h-full flex flex-col items-center justify-center p-6">
               {/* Welcome Message */}
               <div className="text-center mb-8">
                 <h1 className={`text-3xl md:text-4xl font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -157,8 +154,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
           )}
         </div>
 
-        {/* Chat Input and Footer Section */}
-        <div className="px-6 pb-6 pt-4 flex-shrink-0 border-t border-transparent">
+        {/* Chat Input Section - Always Visible */}
+        <div className="flex-shrink-0 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
           <ChatInput
             message={message}
             setMessage={setMessage}
