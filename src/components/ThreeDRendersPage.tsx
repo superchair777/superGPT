@@ -20,7 +20,9 @@ import {
   Pause,
   Settings,
   Eye,
-  Palette
+  Palette,
+  Share2,
+  Trash2
 } from 'lucide-react';
 
 const ThreeDRendersPage: React.FC = () => {
@@ -105,6 +107,26 @@ const ThreeDRendersPage: React.FC = () => {
             
             {/* Viewer Controls */}
             <div className="flex items-center gap-2">
+             {/* Export and Delete Buttons */}
+             <button 
+               onClick={() => setShowExport(true)} 
+               className={`p-2 rounded-lg transition-colors ${
+                 isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+               }`}
+               title="Export"
+             >
+               <Share2 size={18} />
+             </button>
+             <button 
+               onClick={() => setShowDelete(true)} 
+               className={`p-2 rounded-lg transition-colors ${
+                 isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+               }`}
+               title="Delete"
+             >
+               <Trash2 size={18} />
+             </button>
+             <div className="w-px h-6 bg-gray-300 mx-2" />
               <button
                 onClick={() => setIsCustomizationOpen(true)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${

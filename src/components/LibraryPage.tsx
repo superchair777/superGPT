@@ -124,6 +124,28 @@ const LibraryPage: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-3">
+             {/* Export and Delete Buttons */}
+             <button 
+               onClick={() => setShowExport(true)} 
+               className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
+                 isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+               }`}
+             >
+               <Share2 size={18} />
+               <span className="text-sm sr-only">Export</span>
+             </button>
+             <button 
+               onClick={() => setShowDelete(true)} 
+               className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
+                 isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+               }`}
+             >
+               <Trash2 size={18} />
+               <span className="text-sm sr-only">Delete</span>
+             </button>
+             
+             <div className="w-px h-6 bg-gray-300 mx-2" />
+             
               {selectedImages.length > 0 && (
                 <div className="flex items-center gap-2">
                   <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
