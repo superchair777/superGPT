@@ -107,15 +107,15 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-        <div className={`flex-1 flex flex-col overflow-hidden ${messages.length === 0 ? 'justify-center' : ''}`}>
+        <div className="flex-1 flex flex-col min-h-0">
           {messages.length > 0 ? (
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6 min-h-0">
               {messages.map((msg, index) => (
                 <ChatMessage key={index} message={msg} />
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center p-6">
+            <div className="flex-1 flex flex-col items-center justify-center p-6">
               {/* Welcome Message */}
               <div className="text-center mb-8">
                 <h1 className={`text-3xl md:text-4xl font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -158,13 +158,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
         </div>
 
         {/* Chat Input and Footer Section */}
-        <div className={`px-6 pb-6 pt-2 shrink-0 transition-all duration-500 ease-in-out ${messages.length > 0 ? 'mt-0' : '-mt-16'}`}>
+        <div className="px-6 pb-6 pt-4 flex-shrink-0 border-t border-transparent">
           <ChatInput
             message={message}
             setMessage={setMessage}
             handleSendMessage={handleSendMessage}
           />
-          <div className="mt-2 text-center">
+          <div className="mt-3 text-center">
             <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
               {t('chat.disclaimer')}
             </p>
