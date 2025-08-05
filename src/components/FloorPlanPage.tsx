@@ -7,6 +7,8 @@ import ChatInput from './ChatInput';
 import { useChat } from '../contexts/ChatContext';
 import ChatMessage from './ChatMessage';
 import FloorPlanModal from './FloorPlanModal';
+import ExportModal from './ExportModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const FloorPlanPage: React.FC = () => {
   const { isDark } = useTheme();
@@ -19,6 +21,8 @@ const FloorPlanPage: React.FC = () => {
   const [currentImage, setCurrentImage] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(100);
+  const [showExport, setShowExport] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const totalImages = 3;
 

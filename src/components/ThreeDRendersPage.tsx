@@ -6,6 +6,8 @@ import Header from './Header';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import CustomizationModal from './CustomizationModal';
+import ExportModal from './ExportModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -34,6 +36,8 @@ const ThreeDRendersPage: React.FC = () => {
   const [selectedMaterial, setSelectedMaterial] = useState('wood');
   const [selectedLighting, setSelectedLighting] = useState('natural');
   const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const totalRenders = 4;
 

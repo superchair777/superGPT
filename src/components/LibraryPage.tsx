@@ -5,6 +5,8 @@ import { useChat } from '../contexts/ChatContext';
 import Header from './Header';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
+import ExportModal from './ExportModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { 
   Plus, 
   SlidersHorizontal, 
@@ -39,6 +41,8 @@ const LibraryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedImages, setSelectedImages] = useState<number[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
