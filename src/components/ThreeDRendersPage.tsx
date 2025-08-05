@@ -289,32 +289,32 @@ const ThreeDRendersPage: React.FC = () => {
                   <Settings size={24} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
                 </div>
                 <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Start a conversation to customize your 3D render
+                  {t('threeDRenders.startConversation')}
                 </p>
                 <div className="mt-6 space-y-2">
                   <button
-                    onClick={() => setMessage("Create a modern living room with wooden furniture")}
+                    onClick={() => setMessage(t('threeDRenders.exampleLivingRoom'))}
                     className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
-                    💡 Create a modern living room with wooden furniture
+                    💡 {t('threeDRenders.exampleLivingRoom')}
                   </button>
                   <button
-                    onClick={() => setMessage("Change the lighting to warm and cozy")}
+                    onClick={() => setMessage(t('threeDRenders.exampleLighting'))}
                     className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
-                    🔆 Change the lighting to warm and cozy
+                    🔆 {t('threeDRenders.exampleLighting')}
                   </button>
                   <button
-                    onClick={() => setMessage("Add more plants and natural elements")}
+                    onClick={() => setMessage(t('threeDRenders.examplePlants'))}
                     className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
-                    🌿 Add more plants and natural elements
+                    🌿 {t('threeDRenders.examplePlants')}
                   </button>
                 </div>
               </div>

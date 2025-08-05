@@ -253,7 +253,7 @@ const FloorPlanPage: React.FC = () => {
                   <Settings size={24} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
                 </div>
                 <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Start a conversation to customize your floor plan
+                  {t('floorPlan.startConversation')}
                 </p>
               </div>
             ) : (

@@ -432,32 +432,32 @@ const LibraryPage: React.FC = () => {
                   <ImageIcon size={24} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
                 </div>
                 <p className={`text-sm mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Start creating amazing images with AI
+                  {t('library.startCreating')}
                 </p>
                 <div className="space-y-2">
                   <button
-                    onClick={() => setMessage("Create a modern logo for SuperChair")}
+                    onClick={() => setMessage(t('library.exampleLogo'))}
                     className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
-                    🎨 Create a modern logo for SuperChair
+                    🎨 {t('library.exampleLogo')}
                   </button>
                   <button
-                    onClick={() => setMessage("Generate office furniture illustrations")}
+                    onClick={() => setMessage(t('library.exampleFurniture'))}
                     className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
-                    🪑 Generate office furniture illustrations
+                    🪑 {t('library.exampleFurniture')}
                   </button>
                   <button
-                    onClick={() => setMessage("Create icons for a furniture app")}
+                    onClick={() => setMessage(t('library.exampleIcons'))}
                     className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
-                    ⭐ Create icons for a furniture app
+                    ⭐ {t('library.exampleIcons')}
                   </button>
                 </div>
               </div>
