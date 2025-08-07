@@ -29,16 +29,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { t } = useLanguage();
   const { user } = useUser();
   const { startNewChat } = useChat();
-  const { setActiveView } = useView();
+  const { activeView, setActiveView } = useView();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSearchOpen, setSearchOpen] = useState(false);
 
   const menuItems = [
-    { icon: MessageSquare, label: t('sidebar.newChat'), primary: true },
-    { icon: Search, label: t('sidebar.searchChats') },
-    { icon: BookOpen, label: t('sidebar.library') },
-    { icon: Map, label: t('sidebar.sora') },
-    { icon: Box, label: t('sidebar.gpts') },
+    { icon: MessageSquare, label: t('sidebar.newChat'), view: 'chat', action: 'newChat' },
+    { icon: Search, label: t('sidebar.searchChats'), action: 'search' },
+    { icon: BookOpen, label: t('sidebar.library'), view: 'library' },
+    { icon: Map, label: t('sidebar.sora'), view: 'floorPlan' },
+    { icon: Box, label: t('sidebar.gpts'), view: 'threeDRenders' },
   ];
 
   const chatHistory = [
@@ -48,6 +48,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     t('chat.codeReview'),
   ];
 
+  const isItemActive = (item: typeof menuItems[0]) => {
+    if (item.action === 'newChat') {
+      return activeView === 'chat';
+    }
+    return item.view === activeView;
+  };
   return (
     <>
       {/* Mobile overlay */}
@@ -91,22 +97,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 <button
                   key={index}
                   onClick={() => {
-                    if (item.primary) {
+                    if (item.action === 'newChat') {
                       startNewChat('main');
                       setActiveView('chat');
-                    } else if (item.label === t('sidebar.searchChats')) {
+                    } else if (item.action === 'search') {
                       setSearchOpen(true);
-                    } else if (item.label === t('sidebar.library')) {
-                      setActiveView('library');
-                    } else if (item.label === t('sidebar.sora')) {
-                      setActiveView('floorPlan');
-                    } else if (item.label === t('sidebar.gpts')) {
-                      setActiveView('threeDRenders');
+                    } else if (item.view) {
+                      setActiveView(item.view as any);
                     }
                   }}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors
-                    ${item.primary
+                    ${isItemActive(item)
                       ? isDark
                         ? 'bg-gray-700 text-white hover:bg-gray-600'
                         : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
