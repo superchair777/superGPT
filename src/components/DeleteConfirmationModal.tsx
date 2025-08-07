@@ -23,14 +23,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpe
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-red-100 p-2 rounded-full">
-              <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {deleteType === 'images' ? t('delete.imagesTitle') : t('delete.title')}
-              </h2>
-            </div>
-            <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('delete.title')}</h2>
-          </div>
+          <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            {deleteType === 'images' ? t('delete.imagesTitle') : t('delete.title')}
+          </h2>
           <button onClick={onClose} className={`p-1 rounded-full ${isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}>
             <X size={20} />
           </button>
