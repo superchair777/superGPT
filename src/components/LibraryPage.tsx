@@ -374,6 +374,7 @@ const LibraryPage: React.FC = () => {
                       checked={selectedImages.includes(image.id)}
                       onChange={() => toggleImageSelection(image.id)}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 cursor-pointer"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 cursor-pointer"
                       onClick={() => setEnlargedImage(image)}
                     />
                     
