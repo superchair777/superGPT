@@ -424,7 +424,7 @@ const CompanyCataloguePage: React.FC = () => {
                         }`}
                       >
                         <ShoppingCart size={16} />
-                        {t('catalogue.addToCart')}
+                        {t('catalogue.addToQuotation')}
                       </button>
                       <button
                         onClick={() => setSelectedProduct(product)}
@@ -548,7 +548,7 @@ const CompanyCataloguePage: React.FC = () => {
                           }`}
                         >
                           <ShoppingCart size={16} />
-                          {t('catalogue.addToCart')}
+                          {t('catalogue.addToQuotation')}
                         </button>
                       </div>
                     </div>
@@ -712,7 +712,7 @@ const CompanyCataloguePage: React.FC = () => {
                       }`}
                     >
                       <ShoppingCart size={20} />
-                      {selectedProduct.inStock ? t('catalogue.addToCart') : t('catalogue.outOfStock')}
+                      {selectedProduct.inStock ? t('catalogue.addToQuotation') : t('catalogue.outOfStock')}
                     </button>
                     <button
                       onClick={() => toggleFavorite(selectedProduct.id)}
