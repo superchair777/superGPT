@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, Maximize2, RotateCcw, ZoomIn, ZoomOut, Grid, Layers, Settings, Share2, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Maximize2, RotateCcw, ZoomIn, ZoomOut, Grid, Layers, Settings, Share2, Trash2, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import Header from './Header';
@@ -97,7 +97,7 @@ const FloorPlanPage: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex gap-6 p-6 overflow-hidden min-h-0">
         {/* Left Column: Floor Plan Viewer */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className={`flex-1 flex flex-col min-h-0 ${showLayers ? 'mr-6' : ''}`}>
           {/* Toolbar */}
           <div className={`flex items-center justify-between p-4 rounded-t-xl border-b ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-gray-50 border-gray-200'
@@ -281,7 +281,7 @@ const FloorPlanPage: React.FC = () => {
         </div>
 
         {/* Right Column: Chat Interface */}
-        <div className={`${showLayers ? 'w-80' : 'w-96'} flex flex-col rounded-xl border ${
+        <div className={`w-96 flex flex-col rounded-xl border ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
         } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
@@ -323,15 +323,25 @@ const FloorPlanPage: React.FC = () => {
         
         {/* Layers Panel */}
         {showLayers && (
-          <div className={`w-64 rounded-xl border ${
+          <div className={`absolute right-6 top-6 bottom-6 w-64 rounded-xl border ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
-          } shadow-lg`}>
+          } shadow-2xl z-20`}>
             <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-              <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Layers
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  Layers
+                </h3>
+                <button
+                  onClick={() => setShowLayers(false)}
+                  className={`p-1 rounded-full transition-colors ${
+                    isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                  }`}
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 overflow-y-auto flex-1">
               {[
                 { name: 'Walls', visible: true, color: 'bg-gray-500' },
                 { name: 'Doors', visible: true, color: 'bg-brown-500' },
