@@ -302,7 +302,7 @@ const FloorPlanPage: React.FC = () => {
       </div>
       
       <FloorPlanModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} exportType="images" />
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}

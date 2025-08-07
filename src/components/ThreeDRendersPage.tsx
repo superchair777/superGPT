@@ -373,7 +373,7 @@ const ThreeDRendersPage: React.FC = () => {
         selectedLighting={selectedLighting}
         setSelectedLighting={setSelectedLighting}
       />
-      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} exportType="images" />
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
