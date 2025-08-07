@@ -7,9 +7,10 @@ interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  deleteType?: 'chat' | 'images';
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onClose, onConfirm }) => {
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onClose, onConfirm, deleteType = 'chat' }) => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
 
@@ -24,7 +25,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpe
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
             <div className="bg-red-100 p-2 rounded-full">
-              <AlertTriangle size={24} className="text-red-600" />
+              <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                {deleteType === 'images' ? t('delete.imagesTitle') : t('delete.title')}
+              </h2>
             </div>
             <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('delete.title')}</h2>
           </div>
@@ -32,7 +35,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpe
             <X size={20} />
           </button>
         </div>
-        <p className={`mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('delete.message')}</p>
+        <p className={`mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+          {deleteType === 'images' ? t('delete.imagesMessage') : t('delete.message')}
+        </p>
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}

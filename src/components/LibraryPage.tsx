@@ -531,9 +531,11 @@ const LibraryPage: React.FC = () => {
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
+        deleteType="images"
         onConfirm={() => {
-          // Handle delete logic here
-          console.log('Delete library items');
+          // Handle delete selected images logic here
+          console.log('Delete selected images:', selectedImages);
+          setSelectedImages([]); // Clear selection after delete
           setShowDelete(false);
         }}
       />

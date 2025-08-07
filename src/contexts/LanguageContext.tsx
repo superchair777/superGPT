@@ -95,6 +95,8 @@ const translations = {
     // Delete Modal
     'delete.title': 'Delete Chat',
     'delete.message': 'Are you sure you want to delete this chat? This action cannot be undone.',
+    'delete.imagesTitle': 'Delete Images',
+    'delete.imagesMessage': 'Are you sure you want to delete the selected images? This action cannot be undone.',
     'delete.cancelButton': 'Cancel',
     'delete.deleteButton': 'Delete',
 
@@ -315,6 +317,8 @@ const translations = {
     // Delete Modal
     'delete.title': 'ลบแชท',
     'delete.message': 'คุณแน่ใจหรือไม่ว่าต้องการลบแชทนี้ การกระทำนี้ไม่สามารถยกเลิกได้',
+    'delete.imagesTitle': 'ลบรูปภาพ',
+    'delete.imagesMessage': 'คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพที่เลือก การกระทำนี้ไม่สามารถยกเลิกได้',
     'delete.cancelButton': 'ยกเลิก',
     'delete.deleteButton': 'ลบ',
 
