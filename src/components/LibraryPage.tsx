@@ -26,10 +26,10 @@ import {
   Tag,
   Folder,
   Star,
-  Trash2
+  Trash2,
+  Maximize2
 } from 'lucide-react';
 
-const LibraryPage: React.FC = () => {
 const LibraryPage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
@@ -219,13 +219,11 @@ const LibraryPage: React.FC = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`p-2 rounded-lg transition-colors ${
                   showFilters
-                onClick={toggleFullscreen}
-                title={isFullscreen ? 'Exit Fullscreen' : t('common.fullscreen')}
                     ? 'bg-blue-600 text-white'
                     : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
                 }`}
               >
-                <Maximize2 size={18} />
+                <Filter size={18} />
               </button>
               
               <button
