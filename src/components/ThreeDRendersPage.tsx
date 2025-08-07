@@ -374,7 +374,6 @@ const ThreeDRendersPage: React.FC = () => {
         setSelectedLighting={setSelectedLighting}
       />
       <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
-      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} exportType="chat" />
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
