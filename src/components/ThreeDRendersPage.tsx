@@ -121,7 +121,7 @@ const ThreeDRendersPage: React.FC = () => {
       
       <div className="flex-1 flex gap-6 p-6 overflow-hidden">
         {/* Main 3D Viewer */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col min-h-0 max-w-4xl">
           {/* Viewer Header */}
           <div className={`flex items-center justify-between p-4 rounded-t-xl border-b ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-gray-50 border-gray-200'
@@ -351,7 +351,7 @@ const ThreeDRendersPage: React.FC = () => {
         </div>
 
         {/* Right Sidebar - Chat Interface */}
-        <div className={`w-80 flex-shrink-0 flex flex-col rounded-xl border ${
+        <div className={`w-96 flex-shrink-0 flex flex-col rounded-xl border ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
         } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
