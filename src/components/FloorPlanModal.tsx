@@ -58,7 +58,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="flex h-[600px]">
+        <div className="flex h-[calc(90vh-200px)] min-h-[500px]">
           {/* Sidebar Tabs */}
           <div className={`w-48 border-r ${isDark ? 'border-gray-700 bg-[#212121]' : 'border-gray-200 bg-gray-50'}`}>
             <div className="p-4">
@@ -82,7 +82,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className="flex-1 p-6 overflow-y-auto max-h-full">
             {activeTab === 'dimensions' && (
               <div className="space-y-6">
                 <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -279,7 +279,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className={`flex justify-between items-center p-6 border-t ${
+        <div className={`flex justify-between items-center p-6 border-t flex-shrink-0 ${
           isDark ? 'border-gray-700' : 'border-gray-200'
         }`}>
           <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
