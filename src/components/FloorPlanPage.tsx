@@ -198,7 +198,7 @@ const FloorPlanPage: React.FC = () => {
             {/* Grid Overlay */}
             {showGrid && (
               <div 
-                className="absolute inset-0 pointer-events-none opacity-20"
+                className="absolute inset-4 pointer-events-none opacity-20 rounded-lg"
                 style={{
                   backgroundImage: `
                     linear-gradient(to right, ${isDark ? '#666' : '#ccc'} 1px, transparent 1px),

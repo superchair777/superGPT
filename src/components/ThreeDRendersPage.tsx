@@ -246,7 +246,7 @@ const ThreeDRendersPage: React.FC = () => {
             {/* Reference Grid Overlay */}
             {showGrid && (
               <div 
-                className="absolute inset-0 pointer-events-none opacity-10"
+                className="absolute inset-4 pointer-events-none opacity-10 rounded-lg"
                 style={{
                   backgroundImage: `
                     linear-gradient(to right, ${isDark ? '#888' : '#999'} 1px, transparent 1px),
