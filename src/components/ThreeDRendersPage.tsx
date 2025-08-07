@@ -422,7 +422,7 @@ const ThreeDRendersPage: React.FC = () => {
         
         {/* Render Layers Panel */}
         {showLayers && (
-          <div className={`absolute right-6 top-6 bottom-6 w-64 rounded-xl border ${
+          <div className={`absolute right-[21rem] top-6 bottom-6 w-64 rounded-xl border ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
           } shadow-2xl z-20`}>
             <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
