@@ -195,30 +195,36 @@ const FloorPlanPage: React.FC = () => {
           <div className={`flex-1 flex items-center justify-center p-4 rounded-b-xl border-l border-r border-b min-h-0 ${
             isDark ? 'bg-[#1a1a1a] border-gray-600' : 'bg-gray-50 border-gray-200'
           } relative`}>
-            <div 
-              className="relative bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 max-w-full max-h-full"
-              style={{ transform: `scale(${zoom / 100})` }}
-            >
-              {/* Grid Overlay - Only on the canvas */}
-              {showGrid && (
-                <div 
-                  className="absolute inset-0 pointer-events-none opacity-20 z-10"
-                  style={{
-                    backgroundImage: `
-                      linear-gradient(to right, ${isDark ? '#666' : '#ccc'} 1px, transparent 1px),
-                      linear-gradient(to bottom, ${isDark ? '#666' : '#ccc'} 1px, transparent 1px)
-                    `,
-                    backgroundSize: '20px 20px'
-                  }}
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              <div 
+                className="relative bg-white rounded-lg shadow-lg transition-transform duration-300"
+                style={{ 
+                  transform: `scale(${zoom / 100})`,
+                  maxWidth: `${100 / (zoom / 100)}%`,
+                  maxHeight: `${100 / (zoom / 100)}%`
+                }}
+              >
+                {/* Grid Overlay - Only on the canvas */}
+                {showGrid && (
+                  <div 
+                    className="absolute inset-0 pointer-events-none opacity-20 z-10"
+                    style={{
+                      backgroundImage: `
+                        linear-gradient(to right, ${isDark ? '#666' : '#ccc'} 1px, transparent 1px),
+                        linear-gradient(to bottom, ${isDark ? '#666' : '#ccc'} 1px, transparent 1px)
+                      `,
+                      backgroundSize: '20px 20px'
+                    }}
+                  />
+                )}
+                <img 
+                  src="/floorplan-placeholder.png"
+                  alt={`Floor plan ${currentImage}`}
+                  className="w-full h-auto max-w-full max-h-full object-contain relative z-0"
                 />
-              )}
-              <img 
-                src="/floorplan-placeholder.png"
-                alt={`Floor plan ${currentImage}`}
-                className="w-full h-auto max-w-3xl max-h-[60vh] object-contain relative z-0"
-              />
-              <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
-                {t('floorPlan.plan')} {currentImage}
+                <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
+                  {t('floorPlan.plan')} {currentImage}
+                </div>
               </div>
             </div>
           </div>

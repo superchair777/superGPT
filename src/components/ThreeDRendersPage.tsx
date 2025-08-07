@@ -244,12 +244,17 @@ const ThreeDRendersPage: React.FC = () => {
           <div className={`flex-1 flex items-center justify-center p-4 rounded-b-xl border-l border-r border-b min-h-0 ${
             isDark ? 'bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border-gray-600' : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200'
           } relative`}>
-            <div 
-              className={`relative rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 ${
-                isRotating ? 'animate-pulse' : ''
-              } max-w-full max-h-full`}
-              style={{ transform: `scale(${zoom / 100})` }}
-            >
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              <div 
+                className={`relative rounded-2xl shadow-2xl transition-all duration-500 ${
+                  isRotating ? 'animate-pulse' : ''
+                }`}
+                style={{ 
+                  transform: `scale(${zoom / 100})`,
+                  maxWidth: `${100 / (zoom / 100)}%`,
+                  maxHeight: `${100 / (zoom / 100)}%`
+                }}
+              >
               {/* Reference Grid Overlay - Only on the canvas */}
               {showGrid && (
                 <div 
@@ -268,7 +273,7 @@ const ThreeDRendersPage: React.FC = () => {
                 alt={`3D Render ${currentRender}`}
                 className={`w-full h-auto max-w-4xl transition-transform duration-1000 ${
                   isRotating ? 'animate-spin' : ''
-                } max-h-[60vh] object-contain relative z-0`}
+                } max-h-full object-contain relative z-0`}
                 style={{ animationDuration: isRotating ? '10s' : '0s' }}
               />
               <div className="absolute top-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-xl">
@@ -296,6 +301,7 @@ const ThreeDRendersPage: React.FC = () => {
                 }`}>
                   {t('threeDRenders.quality4k')}
                 </div>
+              </div>
               </div>
             </div>
           </div>
