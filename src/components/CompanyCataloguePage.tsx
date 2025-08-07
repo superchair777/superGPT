@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useChat } from '../contexts/ChatContext';
 import Header from './Header';
 import { 
   Search, 
@@ -17,12 +18,18 @@ import {
   ChevronDown,
   Package,
   Maximize2,
-  X
+  X,
+  Upload,
+  FileImage,
+  Zap,
+  Calculator,
+  CheckCircle
 } from 'lucide-react';
 
 const CompanyCataloguePage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
+  const { sendMessage } = useChat();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +37,10 @@ const CompanyCataloguePage: React.FC = () => {
   const [sortBy, setSortBy] = useState('name');
   const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   const categories = [
     { id: 'all', name: t('catalogue.allProducts'), count: 24 },
@@ -212,6 +223,69 @@ const CompanyCataloguePage: React.FC = () => {
     return `${dimensions.width} × ${dimensions.depth} × ${dimensions.height} ${dimensions.unit}`;
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const analyzeFloorPlan = async () => {
+    if (!uploadedImage) return;
+    
+    setIsAnalyzing(true);
+    
+    // Simulate AI analysis
+    setTimeout(() => {
+      const mockAnalysis = {
+        detectedProducts: [
+          { product: products[0], quantity: 4, confidence: 95 }, // SuperChair Executive
+          { product: products[2], quantity: 1, confidence: 92 }, // Conference Table Elite
+          { product: products[3], quantity: 2, confidence: 88 }, // Storage Cabinet Max
+          { product: products[1], quantity: 2, confidence: 85 }, // ModernDesk Pro
+        ],
+        totalCost: 0,
+        roomType: 'Executive Office',
+        area: '45 m²'
+      };
+      
+      // Calculate total cost
+      mockAnalysis.totalCost = mockAnalysis.detectedProducts.reduce((total, item) => {
+        return total + (item.product.price * item.quantity);
+      }, 0);
+      
+      setAnalysisResult(mockAnalysis);
+      setIsAnalyzing(false);
+      
+      // Send analysis to chat
+      const sessionId = 'catalogue-analysis';
+      sendMessage(sessionId, {
+        text: `Floor plan analysis complete! I've identified ${mockAnalysis.detectedProducts.length} product types in your ${mockAnalysis.roomType} layout. Total estimated cost: ${formatPrice(mockAnalysis.totalCost, '฿')}`,
+        sender: 'bot'
+      });
+    }, 3000);
+  };
+
+  const generateQuotation = () => {
+    if (!analysisResult) return;
+    
+    const quotationData = {
+      date: new Date().toLocaleDateString(),
+      products: analysisResult.detectedProducts,
+      total: analysisResult.totalCost,
+      roomType: analysisResult.roomType,
+      area: analysisResult.area
+    };
+    
+    // In a real app, this would generate a PDF or send to backend
+    console.log('Generating quotation:', quotationData);
+    alert('Quotation generated successfully! Check your downloads folder.');
+  };
+
   return (
     <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
       <Header />
@@ -223,6 +297,16 @@ const CompanyCataloguePage: React.FC = () => {
         } shadow-sm`}>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  isDark ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                <Upload size={18} />
+                <span className="text-sm font-medium">{t('catalogue.uploadFloorPlan')}</span>
+              </button>
+              
               <Package size={28} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
               <div>
                 <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -732,6 +816,214 @@ const CompanyCataloguePage: React.FC = () => {
                       <Share2 size={20} />
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Floor Plan Upload Modal */}
+      {showUploadModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowUploadModal(false)}
+        >
+          <div 
+            className={`rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden ${
+              isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className={`flex justify-between items-center p-6 border-b ${
+              isDark ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <div>
+                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('catalogue.uploadFloorPlan')}
+                </h2>
+                <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('catalogue.uploadFloorPlanDesc')}
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowUploadModal(false)} 
+                className={`p-2 rounded-full transition-colors ${
+                  isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                }`}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Upload Area */}
+                <div>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {t('catalogue.uploadImage')}
+                  </h3>
+                  
+                  {!uploadedImage ? (
+                    <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+                      isDark ? 'border-gray-600 hover:border-gray-500 bg-[#212121]' : 'border-gray-300 hover:border-gray-400 bg-gray-50'
+                    }`}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="floor-plan-upload"
+                      />
+                      <label htmlFor="floor-plan-upload" className="cursor-pointer">
+                        <FileImage size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                        <p className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                          {t('catalogue.dragDropFloorPlan')}
+                        </p>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {t('catalogue.supportedFormats')}
+                        </p>
+                        <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                          {t('catalogue.browseFiles')}
+                        </button>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="relative rounded-xl overflow-hidden">
+                        <img 
+                          src={uploadedImage} 
+                          alt="Uploaded floor plan" 
+                          className="w-full h-64 object-cover"
+                        />
+                        <button
+                          onClick={() => setUploadedImage(null)}
+                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      
+                      <button
+                        onClick={analyzeFloorPlan}
+                        disabled={isAnalyzing}
+                        className={`w-full flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-medium transition-colors ${
+                          isAnalyzing
+                            ? 'bg-gray-400 cursor-not-allowed text-white'
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        }`}
+                      >
+                        <Zap size={20} />
+                        {isAnalyzing ? t('catalogue.analyzing') : t('catalogue.analyzeFloorPlan')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Analysis Results */}
+                <div>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {t('catalogue.analysisResults')}
+                  </h3>
+                  
+                  {!analysisResult && !isAnalyzing && (
+                    <div className={`p-8 rounded-xl text-center ${
+                      isDark ? 'bg-[#212121]' : 'bg-gray-50'
+                    }`}>
+                      <Calculator size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                      <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {t('catalogue.uploadToAnalyze')}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {isAnalyzing && (
+                    <div className={`p-8 rounded-xl text-center ${
+                      isDark ? 'bg-[#212121]' : 'bg-gray-50'
+                    }`}>
+                      <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                      <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {t('catalogue.analyzingFloorPlan')}
+                      </p>
+                      <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {t('catalogue.identifyingProducts')}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {analysisResult && (
+                    <div className="space-y-4">
+                      <div className={`p-4 rounded-xl ${
+                        isDark ? 'bg-green-900/20 border border-green-700' : 'bg-green-50 border border-green-200'
+                      }`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <CheckCircle size={20} className="text-green-600" />
+                          <span className={`font-semibold ${isDark ? 'text-green-400' : 'text-green-700'}`}>
+                            {t('catalogue.analysisComplete')}
+                          </span>
+                        </div>
+                        <p className={`text-sm ${isDark ? 'text-green-300' : 'text-green-600'}`}>
+                          {t('catalogue.detectedProducts', { count: analysisResult.detectedProducts.length })}
+                        </p>
+                      </div>
+                      
+                      <div className={`p-4 rounded-xl ${
+                        isDark ? 'bg-[#212121]' : 'bg-gray-50'
+                      }`}>
+                        <h4 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                          {t('catalogue.detectedItems')}
+                        </h4>
+                        <div className="space-y-3">
+                          {analysisResult.detectedProducts.map((item: any, index: number) => (
+                            <div key={index} className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <img 
+                                  src={item.product.image} 
+                                  alt={item.product.name}
+                                  className="w-12 h-12 rounded-lg object-cover"
+                                />
+                                <div>
+                                  <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                    {item.product.name}
+                                  </p>
+                                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                    {t('catalogue.quantity')}: {item.quantity} | {t('catalogue.confidence')}: {item.confidence}%
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                  {formatPrice(item.product.price * item.quantity, item.product.currency)}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className={`mt-4 pt-4 border-t ${
+                          isDark ? 'border-gray-600' : 'border-gray-200'
+                        }`}>
+                          <div className="flex justify-between items-center">
+                            <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              {t('catalogue.totalEstimate')}:
+                            </span>
+                            <span className={`text-xl font-bold text-blue-600`}>
+                              {formatPrice(analysisResult.totalCost, '฿')}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <button
+                          onClick={generateQuotation}
+                          className="w-full mt-4 flex items-center justify-center gap-2 py-3 px-6 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                        >
+                          <Calculator size={20} />
+                          {t('catalogue.generateQuotation')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
