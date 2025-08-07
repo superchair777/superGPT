@@ -306,6 +306,7 @@ const FloorPlanPage: React.FC = () => {
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
+        deleteType="images"
         onConfirm={() => {
           // Handle delete logic here
           console.log('Delete floor plan');

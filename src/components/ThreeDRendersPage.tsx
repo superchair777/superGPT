@@ -377,6 +377,7 @@ const ThreeDRendersPage: React.FC = () => {
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
+        deleteType="images"
         onConfirm={() => {
           // Handle delete logic here
           console.log('Delete 3D render');
