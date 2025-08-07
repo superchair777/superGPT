@@ -274,6 +274,21 @@ const ThreeDRendersPage: React.FC = () => {
                 <div className="text-sm font-medium">{t('threeDRenders.render')} {currentRender}</div>
                 <div className="text-xs opacity-75">{selectedMaterial} • {selectedLighting} lighting</div>
               </div>
+              
+              {/* Reference Grid Overlay - Only on the canvas */}
+              {showGrid && (
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-10 z-10"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, ${isDark ? '#888' : '#999'} 1px, transparent 1px),
+                      linear-gradient(to bottom, ${isDark ? '#888' : '#999'} 1px, transparent 1px)
+                    `,
+                    backgroundSize: '30px 30px'
+                  }}
+                />
+              )}
+              
               <div className="absolute top-4 right-4 flex gap-2">
                 <div className={`px-3 py-1 rounded-full text-xs ${
                   isDark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'
