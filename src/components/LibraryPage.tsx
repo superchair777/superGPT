@@ -27,7 +27,8 @@ import {
   Folder,
   Star,
   Trash2,
-  Maximize2
+  Maximize2,
+  X
 } from 'lucide-react';
 
 const LibraryPage: React.FC = () => {
@@ -45,6 +46,7 @@ const LibraryPage: React.FC = () => {
   const [showExport, setShowExport] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [enlargedImage, setEnlargedImage] = useState<typeof images[0] | null>(null);
 
   const toggleFullscreen = async () => {
     try {
@@ -371,11 +373,17 @@ const LibraryPage: React.FC = () => {
                       type="checkbox"
                       checked={selectedImages.includes(image.id)}
                       onChange={() => toggleImageSelection(image.id)}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 cursor-pointer"
+                      onClick={() => setEnlargedImage(image)}
                     />
                     
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
-                      <img src={image.src} alt={image.title} className="w-full h-full object-cover" />
+                      <img 
+                        src={image.src} 
+                        alt={image.title} 
+                        className="w-full h-full object-cover cursor-pointer" 
+                        onClick={() => setEnlargedImage(image)}
+                      />
                     </div>
                     
                     <div className="flex-1 min-w-0">
@@ -528,6 +536,80 @@ const LibraryPage: React.FC = () => {
           setShowDelete(false);
         }}
       />
+      
+      {/* Image Enlargement Modal */}
+      {enlargedImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <div 
+            className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setEnlargedImage(null)}
+              className="absolute top-4 right-4 z-10 p-3 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            {/* Image */}
+            <img
+              src={enlargedImage.src}
+              alt={enlargedImage.title}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            />
+            
+            {/* Image Info Overlay */}
+            <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-70 text-white p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">{enlargedImage.title}</h3>
+                  <div className="flex items-center gap-4 mt-2 text-sm opacity-75">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={14} />
+                      <span>{enlargedImage.date}</span>
+                    </div>
+                    <div className="flex gap-1">
+                      {enlargedImage.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 text-xs bg-white bg-opacity-20 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleFavorite(enlargedImage.id)}
+                    className={`p-2 rounded-lg transition-colors ${
+                      enlargedImage.favorite 
+                        ? 'bg-red-500 hover:bg-red-600' 
+                        : 'bg-white bg-opacity-20 hover:bg-opacity-30'
+                    }`}
+                  >
+                    <Heart size={16} fill={enlargedImage.favorite ? 'currentColor' : 'none'} />
+                  </button>
+                  <a
+                    href={enlargedImage.src}
+                    download={`${enlargedImage.title}.svg`}
+                    className="p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                  >
+                    <Download size={16} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
