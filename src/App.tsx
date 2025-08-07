@@ -11,6 +11,7 @@ import ChatArea from './components/ChatArea';
 import LibraryPage from './components/LibraryPage';
 import FloorPlanPage from './components/FloorPlanPage';
 import ThreeDRendersPage from './components/ThreeDRendersPage';
+import CompanyCataloguePage from './components/CompanyCataloguePage';
 
 const MainContent: React.FC<{ sidebarOpen: boolean }> = ({ sidebarOpen }) => {
   const { activeView } = useView();
@@ -22,6 +23,8 @@ const MainContent: React.FC<{ sidebarOpen: boolean }> = ({ sidebarOpen }) => {
       return <FloorPlanPage />;
     case 'threeDRenders':
       return <ThreeDRendersPage />;
+    case 'companyCatalogue':
+      return <CompanyCataloguePage />;
     case 'chat':
     default:
       return <ChatArea sidebarOpen={sidebarOpen} />;
