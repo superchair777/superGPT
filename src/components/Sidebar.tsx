@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   Map,
-  Box
+  Box,
+  Building2
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -39,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { icon: BookOpen, label: t('sidebar.library'), view: 'library' },
     { icon: Map, label: t('sidebar.sora'), view: 'floorPlan' },
     { icon: Box, label: t('sidebar.gpts'), view: 'threeDRenders' },
+    { icon: Building2, label: t('sidebar.companyCatalogue'), view: 'companyCatalogue' },
   ];
 
   const chatHistory = [
