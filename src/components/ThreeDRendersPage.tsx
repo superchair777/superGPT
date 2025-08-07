@@ -121,7 +121,7 @@ const ThreeDRendersPage: React.FC = () => {
       
       <div className="flex-1 flex gap-6 p-6 overflow-hidden">
         {/* Main 3D Viewer */}
-        <div className="flex-1 flex flex-col min-h-0 max-w-4xl">
+        <div className="flex-1 flex flex-col min-h-0 max-w-3xl">
           {/* Viewer Header */}
           <div className={`flex items-center justify-between p-4 rounded-t-xl border-b ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-gray-50 border-gray-200'
@@ -351,7 +351,7 @@ const ThreeDRendersPage: React.FC = () => {
         </div>
 
         {/* Right Sidebar - Chat Interface */}
-        <div className={`w-96 flex-shrink-0 flex flex-col rounded-xl border ${
+        <div className={`w-80 flex-shrink-0 flex flex-col rounded-xl border ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
         } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
@@ -380,30 +380,21 @@ const ThreeDRendersPage: React.FC = () => {
                 <div className="mt-6 space-y-2">
                   <button
                     onClick={() => setMessage(t('threeDRenders.exampleLivingRoom'))}
-                    className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
-                      isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
+                    className={`w-full text-left p-2 rounded-lg text-xs transition-colors ${
                     💡 {t('threeDRenders.exampleLivingRoom')}
                   </button>
                   <button
                     onClick={() => setMessage(t('threeDRenders.exampleLighting'))}
-                    className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
-                      isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
+                    className={`w-full text-left p-2 rounded-lg text-xs transition-colors ${
                     🔆 {t('threeDRenders.exampleLighting')}
                   </button>
                   <button
                     onClick={() => setMessage(t('threeDRenders.examplePlants'))}
-                    className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
+                    className={`w-full text-left p-2 rounded-lg text-xs transition-colors ${
                       isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     }`}
                   >
                     🌿 {t('threeDRenders.examplePlants')}
-                  </button>
-                </div>
-              </div>
             ) : (
               messages.map((msg, index) => (
                 <ChatMessage key={index} message={msg} />
@@ -422,7 +413,7 @@ const ThreeDRendersPage: React.FC = () => {
         
         {/* Render Layers Panel */}
         {showLayers && (
-          <div className={`absolute right-6 top-6 bottom-6 w-64 rounded-xl border ${
+          <div className={`absolute right-[21rem] top-6 bottom-6 w-64 rounded-xl border ${
             isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
           } shadow-2xl z-20`}>
             <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
