@@ -213,10 +213,10 @@ const CompanyCataloguePage: React.FC = () => {
   };
 
   return (
-    <div className={`flex-1 flex flex-col ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
+    <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
       <Header />
       
-      <div className="flex-1 p-6 overflow-hidden">
+      <div className="flex-1 p-6 min-h-0">
         {/* Page Header */}
         <div className={`flex items-center justify-between p-6 rounded-xl border mb-6 ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
@@ -338,7 +338,7 @@ const CompanyCataloguePage: React.FC = () => {
         </div>
 
         {/* Products Grid/List */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="overflow-y-auto max-h-[calc(100vh-300px)]">
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedProducts.map((product) => (
