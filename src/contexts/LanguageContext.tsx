@@ -576,7 +576,7 @@ const translations = {
     'floorPlan.modal.generating': 'กำลังสร้าง...',
 
     // 3D Renders specific
-    'threeDRenders.threeDRenderViewer': 'โปรแกรมดูเรนเดอร์ 3 มิติ',
+    'threeDRenders.threeDRenderViewer': 'เรนเดอร์ 3D',
     'threeDRenders.highQuality': 'คุณภาพสูง',
     'threeDRenders.renderAssistant': 'ผู้ช่วยเรนเดอร์',
     'threeDRenders.renderDesc': 'อธิบายความต้องการการแสดงภาพ 3 มิติของคุณ',
