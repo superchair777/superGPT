@@ -303,6 +303,7 @@ const FloorPlanPage: React.FC = () => {
       
       <FloorPlanModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} />
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} exportType="chat" />
       <DeleteConfirmationModal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}

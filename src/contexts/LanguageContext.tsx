@@ -90,6 +90,7 @@ const translations = {
 
     // Export Modal
     'export.title': 'Export Chat',
+    'export.imagesTitle': 'Export Images',
 
     // Delete Modal
     'delete.title': 'Delete Chat',
@@ -309,6 +310,7 @@ const translations = {
 
     // Export Modal
     'export.title': 'ส่งออกแชท',
+    'export.imagesTitle': 'ส่งออกรูปภาพ',
 
     // Delete Modal
     'delete.title': 'ลบแชท',

@@ -6,17 +6,28 @@ import { FileText, Code, FileJson, X } from 'lucide-react';
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
+  exportType?: 'chat' | 'images';
 }
 
-const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => {
+const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, exportType = 'chat' }) => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
 
-  const exportOptions = [
+  const chatExportOptions = [
     { icon: FileText, label: 'PDF' },
     { icon: Code, label: 'TXT' },
     { icon: FileJson, label: 'JSON' },
   ];
+
+  const imageExportOptions = [
+    { icon: FileText, label: 'PNG' },
+    { icon: Code, label: 'JPG' },
+    { icon: FileJson, label: 'SVG' },
+    { icon: FileText, label: 'WEBP' },
+  ];
+
+  const exportOptions = exportType === 'images' ? imageExportOptions : chatExportOptions;
+  const modalTitle = exportType === 'images' ? t('export.imagesTitle') : t('export.title');
 
   if (!isOpen) return null;
 
@@ -27,12 +38,12 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('export.title')}</h2>
+          <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{modalTitle}</h2>
           <button onClick={onClose} className={`p-1 rounded-full ${isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}>
             <X size={20} />
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className={`grid gap-4 ${exportType === 'images' ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-1 sm:grid-cols-3'}`}>
           {exportOptions.map((option, index) => (
             <button
               key={index}
