@@ -42,10 +42,10 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
         }`}>
           <div>
             <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {t('floorPlan.generate')} Floor Plan
+              {t('floorPlan.modal.title')}
             </h2>
             <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Configure your space requirements and generate a custom floor plan
+              {t('floorPlan.modal.subtitle')}
             </p>
           </div>
           <button 
@@ -75,7 +75,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   }`}
                 >
                   <tab.icon size={18} />
-                  <span className="text-sm font-medium">{tab.label}</span>
+                  <span className="text-sm font-medium">{t(`floorPlan.modal.${tab.id}`)}</span>
                 </button>
               ))}
             </div>
@@ -86,12 +86,12 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
             {activeTab === 'dimensions' && (
               <div className="space-y-6">
                 <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Space Dimensions
+                  {t('floorPlan.modal.spaceDimensions')}
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Width (meters)
+                      {t('floorPlan.modal.widthMeters')}
                     </label>
                     <input 
                       type="number" 
@@ -105,7 +105,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Length (meters)
+                      {t('floorPlan.modal.lengthMeters')}
                     </label>
                     <input 
                       type="number" 
@@ -119,7 +119,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Ceiling Height (meters)
+                      {t('floorPlan.modal.ceilingHeight')}
                     </label>
                     <input 
                       type="number" 
@@ -134,7 +134,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Total Area
+                      {t('floorPlan.modal.totalArea')}
                     </label>
                     <div className={`px-4 py-3 rounded-lg border ${
                       isDark ? 'bg-gray-700 border-gray-600 text-gray-300' : 'bg-gray-100 border-gray-300 text-gray-700'
@@ -149,20 +149,20 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
             {activeTab === 'rooms' && (
               <div className="space-y-6">
                 <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Room Configuration
+                  {t('floorPlan.modal.roomConfiguration')}
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
                   {[
-                    { name: 'Bedrooms', defaultValue: 3 },
-                    { name: 'Bathrooms', defaultValue: 2 },
-                    { name: 'Living Areas', defaultValue: 1 },
-                    { name: 'Kitchen', defaultValue: 1 },
-                    { name: 'Dining Room', defaultValue: 1 },
-                    { name: 'Office/Study', defaultValue: 1 },
+                    { key: 'bedrooms', defaultValue: 3 },
+                    { key: 'bathrooms', defaultValue: 2 },
+                    { key: 'livingAreas', defaultValue: 1 },
+                    { key: 'kitchen', defaultValue: 1 },
+                    { key: 'diningRoom', defaultValue: 1 },
+                    { key: 'officeStudy', defaultValue: 1 },
                   ].map((room) => (
-                    <div key={room.name}>
+                    <div key={room.key}>
                       <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {room.name}
+                        {t(`floorPlan.modal.${room.key}`)}
                       </label>
                       <input 
                         type="number" 
@@ -183,20 +183,20 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
             {activeTab === 'furniture' && (
               <div className="space-y-6">
                 <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Furniture & Fixtures
+                  {t('floorPlan.modal.furnitureFixtures')}
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
                   {[
-                    { name: 'Chairs', defaultValue: 8 },
-                    { name: 'Tables', defaultValue: 3 },
-                    { name: 'Cabinets', defaultValue: 5 },
-                    { name: 'Meeting Table', defaultValue: 1 },
-                    { name: 'Sofas', defaultValue: 2 },
-                    { name: 'Wardrobes', defaultValue: 3 },
+                    { key: 'chairs', defaultValue: 8 },
+                    { key: 'tables', defaultValue: 3 },
+                    { key: 'cabinets', defaultValue: 5 },
+                    { key: 'meetingTable', defaultValue: 1 },
+                    { key: 'sofas', defaultValue: 2 },
+                    { key: 'wardrobes', defaultValue: 3 },
                   ].map((item) => (
-                    <div key={item.name}>
+                    <div key={item.key}>
                       <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {item.name}
+                        {t(`floorPlan.modal.${item.key}`)}
                       </label>
                       <input 
                         type="number" 
@@ -217,12 +217,12 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
             {activeTab === 'features' && (
               <div className="space-y-6">
                 <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Special Features
+                  {t('floorPlan.modal.specialFeatures')}
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Doors
+                      {t('floorPlan.modal.doors')}
                     </label>
                     <input 
                       type="number" 
@@ -236,7 +236,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Windows
+                      {t('floorPlan.modal.windows')}
                     </label>
                     <input 
                       type="number" 
@@ -252,15 +252,15 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                 
                 <div className="space-y-4">
                   <h4 className={`text-md font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    Additional Features
+                    {t('floorPlan.modal.additionalFeatures')}
                   </h4>
                   {[
-                    'Staircase',
-                    'Balcony',
-                    'Fireplace',
-                    'Walk-in Closet',
-                    'Laundry Room',
-                    'Garage',
+                    'staircase',
+                    'balcony',
+                    'fireplace',
+                    'walkInCloset',
+                    'laundryRoom',
+                    'garage',
                   ].map((feature) => (
                     <label key={feature} className="flex items-center gap-3">
                       <input 
@@ -268,7 +268,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                         className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                       />
                       <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {feature}
+                        {t(`floorPlan.modal.${feature}`)}
                       </span>
                     </label>
                   ))}
@@ -283,7 +283,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
           isDark ? 'border-gray-700' : 'border-gray-200'
         }`}>
           <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            Generation time: ~30 seconds
+            {t('floorPlan.modal.generationTime')}
           </div>
           <div className="flex gap-3">
             <button
@@ -294,7 +294,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
               }`}
             >
-              Cancel
+              {t('floorPlan.modal.cancel')}
             </button>
             <button
               onClick={handleGenerate}
@@ -305,7 +305,7 @@ const FloorPlanModal: React.FC<FloorPlanModalProps> = ({ isOpen, onClose }) => {
                   : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
               }`}
             >
-              {isGenerating ? 'Generating...' : 'Generate Floor Plan'}
+              {isGenerating ? t('floorPlan.modal.generating') : t('floorPlan.modal.generateFloorPlan')}
             </button>
           </div>
         </div>
