@@ -21,6 +21,9 @@ const FloorPlanPage: React.FC = () => {
   const [currentImage, setCurrentImage] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(100);
+  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showExport, setShowExport] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
@@ -79,7 +82,7 @@ const FloorPlanPage: React.FC = () => {
   };
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 25, 200));
+    setZoom(prev => Math.min(prev + 25, 300));
   };
 
   const handleZoomOut = () => {
@@ -88,6 +91,30 @@ const FloorPlanPage: React.FC = () => {
 
   const handleResetZoom = () => {
     setZoom(100);
+    setPanPosition({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (zoom > 100) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - panPosition.x,
+        y: e.clientY - panPosition.y
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && zoom > 100) {
+      setPanPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
@@ -195,13 +222,20 @@ const FloorPlanPage: React.FC = () => {
           <div className={`flex-1 flex items-center justify-center p-4 rounded-b-xl border-l border-r border-b min-h-0 ${
             isDark ? 'bg-[#1a1a1a] border-gray-600' : 'bg-gray-50 border-gray-200'
           } relative`}>
-            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <div 
+              className={`relative w-full h-full flex items-center justify-center overflow-hidden ${
+                zoom > 100 ? 'cursor-grab' : 'cursor-default'
+              } ${isDragging ? 'cursor-grabbing' : ''}`}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
               <div 
-                className="relative bg-white rounded-lg shadow-lg transition-transform duration-300"
+                className="relative bg-white rounded-lg shadow-lg transition-transform duration-200"
                 style={{ 
-                  transform: `scale(${zoom / 100})`,
-                  maxWidth: `${100 / (zoom / 100)}%`,
-                  maxHeight: `${100 / (zoom / 100)}%`
+                  transform: `scale(${zoom / 100}) translate(${panPosition.x / (zoom / 100)}px, ${panPosition.y / (zoom / 100)}px)`,
+                  transformOrigin: 'center center'
                 }}
               >
                 {/* Grid Overlay - Only on the canvas */}
