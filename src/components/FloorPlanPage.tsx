@@ -24,6 +24,32 @@ const FloorPlanPage: React.FC = () => {
   const [showExport, setShowExport] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Error toggling fullscreen:', error);
+    }
+  };
+
+  // Listen for fullscreen changes
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   const totalImages = 3;
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -211,11 +237,13 @@ const FloorPlanPage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsFullscreen(!isFullscreen)}
+                onClick={toggleFullscreen}
                 className={`p-2 rounded-lg transition-colors shadow-sm ${
-                  isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
+                  isFullscreen
+                    ? 'bg-blue-600 text-white'
+                    : isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
-                title={t('common.fullscreen')}
+                title={isFullscreen ? 'Exit Fullscreen' : t('common.fullscreen')}
               >
                 <Maximize2 size={18} />
               </button>

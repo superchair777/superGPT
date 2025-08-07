@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 
 const LibraryPage: React.FC = () => {
+const LibraryPage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
   const { messages: allMessages, sendMessage } = useChat();
@@ -43,6 +44,33 @@ const LibraryPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Error toggling fullscreen:', error);
+    }
+  };
+
+  // Listen for fullscreen changes
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,11 +219,25 @@ const LibraryPage: React.FC = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`p-2 rounded-lg transition-colors ${
                   showFilters
+                onClick={toggleFullscreen}
+                title={isFullscreen ? 'Exit Fullscreen' : t('common.fullscreen')}
                     ? 'bg-blue-600 text-white'
                     : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
                 }`}
               >
-                <Filter size={18} />
+                <Maximize2 size={18} />
+              </button>
+              
+              <button
+                onClick={toggleFullscreen}
+                className={`p-2 rounded-lg transition-colors ${
+                  isFullscreen
+                    ? 'bg-blue-600 text-white'
+                    : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
+                }`}
+                title={isFullscreen ? 'Exit Fullscreen' : t('common.fullscreen')}
+              >
+                <Maximize2 size={18} />
               </button>
             </div>
           </div>
