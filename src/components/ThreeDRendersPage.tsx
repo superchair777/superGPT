@@ -22,7 +22,9 @@ import {
   Eye,
   Palette,
   Share2,
-  Trash2
+  Trash2,
+  Grid,
+  Layers
 } from 'lucide-react';
 
 const ThreeDRendersPage: React.FC = () => {
@@ -41,6 +43,8 @@ const ThreeDRendersPage: React.FC = () => {
   const [showExport, setShowExport] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
+  const [showLayers, setShowLayers] = useState(false);
 
   const toggleFullscreen = async () => {
     try {
@@ -165,6 +169,29 @@ const ThreeDRendersPage: React.FC = () => {
                 <span className="text-sm font-medium">{t('common.customize')}</span>
               </button>
               <div className="w-px h-6 bg-gray-300 mx-2" />
+              <div className="w-px h-6 bg-gray-300 mx-2" />
+              <button
+                onClick={() => setShowGrid(!showGrid)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showGrid
+                    ? 'bg-blue-600 text-white'
+                    : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
+                }`}
+                title={showGrid ? 'Hide Reference Grid' : 'Show Reference Grid'}
+              >
+                <Grid size={18} />
+              </button>
+              <button
+                onClick={() => setShowLayers(!showLayers)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showLayers
+                    ? 'bg-blue-600 text-white'
+                    : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
+                }`}
+                title="Toggle Render Layers Panel"
+              >
+                <Layers size={18} />
+              </button>
               <button
                 onClick={handleZoomOut}
                 className={`p-2 rounded-lg transition-colors ${
@@ -216,6 +243,20 @@ const ThreeDRendersPage: React.FC = () => {
           <div className={`flex-1 flex items-center justify-center p-4 rounded-b-xl border-l border-r border-b min-h-0 ${
             isDark ? 'bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border-gray-600' : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200'
           }`}>
+            {/* Reference Grid Overlay */}
+            {showGrid && (
+              <div 
+                className="absolute inset-0 pointer-events-none opacity-10"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(to right, ${isDark ? '#888' : '#999'} 1px, transparent 1px),
+                    linear-gradient(to bottom, ${isDark ? '#888' : '#999'} 1px, transparent 1px)
+                  `,
+                  backgroundSize: '30px 30px'
+                }}
+              />
+            )}
+            
             <div 
               className={`relative rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 ${
                 isRotating ? 'animate-pulse' : ''
@@ -295,7 +336,7 @@ const ThreeDRendersPage: React.FC = () => {
         </div>
 
         {/* Right Sidebar - Chat Interface */}
-        <div className={`w-96 flex flex-col rounded-xl border ${
+        <div className={`${showLayers ? 'w-80' : 'w-96'} flex flex-col rounded-xl border ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
         } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
@@ -363,6 +404,45 @@ const ThreeDRendersPage: React.FC = () => {
             />
           </div>
         </div>
+        
+        {/* Render Layers Panel */}
+        {showLayers && (
+          <div className={`w-64 rounded-xl border ${
+            isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
+          } shadow-lg`}>
+            <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+              <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                Render Layers
+              </h3>
+            </div>
+            <div className="p-4 space-y-3">
+              {[
+                { name: 'Base Geometry', visible: true, color: 'bg-gray-500' },
+                { name: 'Materials', visible: true, color: 'bg-amber-500' },
+                { name: 'Lighting', visible: true, color: 'bg-yellow-500' },
+                { name: 'Shadows', visible: true, color: 'bg-gray-700' },
+                { name: 'Reflections', visible: true, color: 'bg-cyan-500' },
+                { name: 'Post Effects', visible: false, color: 'bg-purple-500' },
+              ].map((layer, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={layer.visible}
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    onChange={() => {
+                      // Layer visibility toggle logic would go here
+                      console.log(`Toggle ${layer.name} visibility`);
+                    }}
+                  />
+                  <div className={`w-4 h-4 rounded ${layer.color}`} />
+                  <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {layer.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       
       <CustomizationModal 
