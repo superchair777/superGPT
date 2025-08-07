@@ -76,12 +76,12 @@ const FloorPlanPage: React.FC = () => {
           }`}>
             <div className="flex items-center gap-2">
               <h2 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Floor Plan Viewer
+                {t('floorPlan.floorPlanViewer')}
               </h2>
               <span className={`px-2 py-1 text-xs rounded-full ${
                 isDark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'
               }`}>
-                Generated
+                {t('floorPlan.generated')}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Zoom Out"
+                title={t('common.zoomOut')}
               >
                 <ZoomOut size={18} />
               </button>
@@ -124,7 +124,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Zoom In"
+                title={t('common.zoomIn')}
               >
                 <ZoomIn size={18} />
               </button>
@@ -133,7 +133,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Reset Zoom"
+                title={t('common.resetZoom')}
               >
                 <RotateCcw size={18} />
               </button>
@@ -142,7 +142,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Toggle Grid"
+                title={t('common.toggleGrid')}
               >
                 <Grid size={18} />
               </button>
@@ -150,7 +150,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Layers"
+                title={t('common.layers')}
               >
                 <Layers size={18} />
               </button>
@@ -171,7 +171,7 @@ const FloorPlanPage: React.FC = () => {
                 className="w-full h-auto max-w-3xl max-h-[60vh] object-contain"
               />
               <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
-                Plan {currentImage}
+                {t('floorPlan.plan')} {currentImage}
               </div>
             </div>
           </div>
@@ -182,7 +182,7 @@ const FloorPlanPage: React.FC = () => {
               onClick={() => setIsModalOpen(true)}
               className="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md hover:shadow-lg"
             >
-              {t('floorPlan.generateButton')}
+              {t('floorPlan.generateNewFloorPlan')}
             </button>
             
             <div className="flex items-center gap-4">
@@ -215,7 +215,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
-                title="Fullscreen"
+                title={t('common.fullscreen')}
               >
                 <Maximize2 size={18} />
               </button>
@@ -223,7 +223,7 @@ const FloorPlanPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
-                title="Download"
+                title={t('common.download')}
               >
                 <Download size={18} />
               </button>
@@ -237,10 +237,10 @@ const FloorPlanPage: React.FC = () => {
         } shadow-lg min-h-0`}>
           <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
             <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Design Assistant
+              {t('floorPlan.designAssistant')}
             </h3>
             <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Describe your floor plan requirements
+              {t('floorPlan.designDesc')}
             </p>
           </div>
           

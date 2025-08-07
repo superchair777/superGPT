@@ -96,12 +96,12 @@ const ThreeDRendersPage: React.FC = () => {
           }`}>
             <div className="flex items-center gap-3">
               <h2 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                3D Render Viewer
+                {t('threeDRenders.threeDRenderViewer')}
               </h2>
               <span className={`px-3 py-1 text-xs rounded-full ${
                 isDark ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-700'
               }`}>
-                High Quality
+                {t('threeDRenders.highQuality')}
               </span>
             </div>
             
@@ -135,7 +135,7 @@ const ThreeDRendersPage: React.FC = () => {
                 title="Customization"
               >
                 <Palette size={18} />
-                <span className="text-sm font-medium">Customize</span>
+                <span className="text-sm font-medium">{t('common.customize')}</span>
               </button>
               <div className="w-px h-6 bg-gray-300 mx-2" />
               <button
@@ -143,7 +143,7 @@ const ThreeDRendersPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Zoom Out"
+                title={t('common.zoomOut')}
               >
                 <ZoomOut size={18} />
               </button>
@@ -157,7 +157,7 @@ const ThreeDRendersPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Zoom In"
+                title={t('common.zoomIn')}
               >
                 <ZoomIn size={18} />
               </button>
@@ -166,7 +166,7 @@ const ThreeDRendersPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors ${
                   isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title="Reset View"
+                title={t('common.resetView')}
               >
                 <RotateCcw size={18} />
               </button>
@@ -178,7 +178,7 @@ const ThreeDRendersPage: React.FC = () => {
                     ? 'bg-blue-600 text-white' 
                     : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'
                 }`}
-                title={isRotating ? "Stop Rotation" : "Auto Rotate"}
+                title={isRotating ? t('common.stopRotation') : t('common.autoRotate')}
               >
                 {isRotating ? <Pause size={18} /> : <Play size={18} />}
               </button>
@@ -204,14 +204,14 @@ const ThreeDRendersPage: React.FC = () => {
                 style={{ animationDuration: isRotating ? '10s' : '0s' }}
               />
               <div className="absolute top-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-xl">
-                <div className="text-sm font-medium">Render {currentRender}</div>
+                <div className="text-sm font-medium">{t('threeDRenders.render')} {currentRender}</div>
                 <div className="text-xs opacity-75">{selectedMaterial} • {selectedLighting} lighting</div>
               </div>
               <div className="absolute top-4 right-4 flex gap-2">
                 <div className={`px-3 py-1 rounded-full text-xs ${
                   isDark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'
                 }`}>
-                  4K Quality
+                  {t('threeDRenders.quality4k')}
                 </div>
               </div>
             </div>
@@ -248,7 +248,7 @@ const ThreeDRendersPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
-                title="Fullscreen"
+                title={t('common.fullscreen')}
               >
                 <Maximize2 size={18} />
               </button>
@@ -256,7 +256,7 @@ const ThreeDRendersPage: React.FC = () => {
                 className={`p-2 rounded-lg transition-colors shadow-sm ${
                   isDark ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300' : 'bg-white hover:bg-gray-50 text-gray-600 border'
                 }`}
-                title="Download"
+                title={t('common.download')}
               >
                 <Download size={18} />
               </button>
@@ -273,10 +273,10 @@ const ThreeDRendersPage: React.FC = () => {
               isDark ? 'text-white' : 'text-gray-900'
             }`}>
               <Eye size={20} />
-              Render Assistant
+              {t('threeDRenders.renderAssistant')}
             </h3>
             <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Describe your 3D visualization needs
+              {t('threeDRenders.renderDesc')}
             </p>
           </div>
           

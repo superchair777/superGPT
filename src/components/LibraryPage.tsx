@@ -113,7 +113,7 @@ const LibraryPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <ImageIcon size={24} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
                 <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Image Library
+                  {t('library.imageLibrary')}
                 </h1>
               </div>
               <span className={`px-3 py-1 text-sm rounded-full ${
@@ -208,7 +208,7 @@ const LibraryPage: React.FC = () => {
               }`} />
               <input
                 type="text"
-                placeholder="Search images, tags, or descriptions..."
+                placeholder={t('library.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
@@ -233,7 +233,7 @@ const LibraryPage: React.FC = () => {
                           : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
                     }`}
                   >
-                    {category.name} ({category.count})
+                    {t(`library.${category.id === 'all' ? 'allImages' : category.id}`)} ({category.count})
                   </button>
                 ))}
               </div>
@@ -397,10 +397,10 @@ const LibraryPage: React.FC = () => {
               <div className="text-center py-12">
                 <ImageIcon size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                 <h3 className={`text-lg font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  No images found
+                  {t('library.noImagesFound')}
                 </h3>
                 <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Try adjusting your search or filters, or create new images using the chat below.
+                  {t('library.noImagesDesc')}
                 </p>
               </div>
             )}
@@ -416,10 +416,10 @@ const LibraryPage: React.FC = () => {
               isDark ? 'text-white' : 'text-gray-900'
             }`}>
               <Plus size={20} />
-              Create Images
+              {t('library.createImages')}
             </h3>
             <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Describe what you want to create
+              {t('library.describeCreate')}
             </p>
           </div>
           
