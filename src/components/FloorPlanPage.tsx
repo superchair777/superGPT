@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Download, Maximize2, RotateCcw, ZoomIn, ZoomOut, Grid, Layers, Settings, Share2, Trash2, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { geminiService } from '../services/geminiService';
 import Header from './Header';
 import ChatInput from './ChatInput';
 import { useChat } from '../contexts/ChatContext';
@@ -28,6 +29,7 @@ const FloorPlanPage: React.FC = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
   const [showLayers, setShowLayers] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleFullscreen = async () => {
     try {
@@ -57,16 +59,19 @@ const FloorPlanPage: React.FC = () => {
 
   const totalImages = 3;
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (message.trim() && !isLoading) {
       sendMessage(sessionId, { text: message, sender: 'user' });
       setMessage('');
+      setIsLoading(true);
       
-      // Mock bot response
-      setTimeout(() => {
+      try {
+        // Get AI response using Gemini for floor plan context
+        const aiResponse = await geminiService.generateFloorPlanResponse(message, messages);
+        
         sendMessage(sessionId, { 
-          text: "I've generated a new floor plan based on your specifications. The layout optimizes space efficiency while maintaining good traffic flow. Would you like me to adjust any specific elements or create variations?", 
+          text: aiResponse, 
           sender: 'bot' 
         });
         
@@ -74,7 +79,15 @@ const FloorPlanPage: React.FC = () => {
         setTimeout(() => {
           saveChatToHistory(sessionId, 'floorPlan');
         }, 500);
-      }, 1000);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        sendMessage(sessionId, { 
+          text: "I apologize, but I'm having trouble processing your request right now. Please try again later.", 
+          sender: 'bot' 
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -362,6 +375,7 @@ const FloorPlanPage: React.FC = () => {
               message={message}
               setMessage={setMessage}
               handleSendMessage={handleSendMessage}
+              isLoading={isLoading}
             />
           </div>
         </div>

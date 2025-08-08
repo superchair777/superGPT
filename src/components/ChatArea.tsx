@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useChat } from '../contexts/ChatContext';
+import { geminiService } from '../services/geminiService';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import Header from './Header';
@@ -34,6 +35,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
   const messages = allMessages[sessionId] || [];
   const [message, setMessage] = useState('');
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const allActions = [
     { icon: Image, label: t('actions.createImage'), color: 'text-green-400' },
@@ -46,42 +48,20 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
     { icon: Lightbulb, label: t('more.brainstorm'), color: 'text-pink-400' },
   ];
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (message.trim() && !isLoading) {
       const newMessage: Message = { text: message, sender: 'user' };
       sendMessage(sessionId, newMessage);
       setMessage('');
+      setIsLoading(true);
 
-      // Mock bot response
-      setTimeout(() => {
+      try {
+        // Get AI response using Gemini
+        const aiResponse = await geminiService.generateChatResponse(newMessage.text, messages);
+        
         const botMessage: Message = {
-          text: `
-            <p>Becoming a developer is a mix of learning, building, and consistency. Here's a clear path that works well for most people:</p>
-            <h3>1. Pick a Starting Path</h3>
-            <p>Decide what kind of developer you want to be:</p>
-            <ul>
-              <li><strong>Web Developer</strong> (Front-end, Back-end, Full-stack)</li>
-              <li><strong>Mobile App Developer</strong> (iOS, Android, Flutter)</li>
-              <li><strong>Game Developer</strong> (Unity, Unreal Engine)</li>
-              <li><strong>Data/AI Developer</strong> (Python, ML, data science)</li>
-              <li><strong>Software Engineer</strong> (general-purpose apps/tools)</li>
-            </ul>
-            <p>If you're not sure, start with web development. It's beginner-friendly and highly employable.</p>
-            <h3>2. Learn the Fundamentals</h3>
-            <p>Regardless of your path, you need to understand:</p>
-            <ul>
-              <li><strong>Programming basics</strong> (variables, loops, functions, data structures)</li>
-              <li>Choose a beginner-friendly language:
-                <ul>
-                  <li><strong>JavaScript</strong> for web</li>
-                  <li><strong>Python</strong> for general-purpose, AI, or automation</li>
-                  <li><strong>Java/Kotlin</strong> for Android</li>
-                  <li><strong>Swift</strong> for iOS</li>
-                </ul>
-              </li>
-            </ul>
-          `,
+          text: aiResponse,
           sender: 'bot',
         };
         sendMessage(sessionId, botMessage);
@@ -90,7 +70,16 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
         setTimeout(() => {
           saveChatToHistory(sessionId, 'chat');
         }, 500);
-      }, 1000);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        const errorMessage: Message = {
+          text: "I apologize, but I'm having trouble processing your request right now. Please try again later.",
+          sender: 'bot',
+        };
+        sendMessage(sessionId, errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -165,6 +154,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
             message={message}
             setMessage={setMessage}
             handleSendMessage={handleSendMessage}
+            isLoading={isLoading}
           />
           <div className="mt-3 text-center">
             <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useChat } from '../contexts/ChatContext';
+import { geminiService } from '../services/geminiService';
 import Header from './Header';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
@@ -47,6 +48,7 @@ const LibraryPage: React.FC = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<typeof images[0] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleFullscreen = async () => {
     try {
@@ -74,16 +76,19 @@ const LibraryPage: React.FC = () => {
     };
   }, []);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (message.trim() && !isLoading) {
       sendMessage(sessionId, { text: message, sender: 'user' });
       setMessage('');
+      setIsLoading(true);
       
-      // Mock bot response
-      setTimeout(() => {
+      try {
+        // Get AI response using Gemini for library context
+        const aiResponse = await geminiService.generateLibraryResponse(message, messages);
+        
         sendMessage(sessionId, { 
-          text: "I've generated new images based on your description. The images are now available in your library. Would you like me to create variations or modify any specific aspects?", 
+          text: aiResponse, 
           sender: 'bot' 
         });
         
@@ -91,7 +96,15 @@ const LibraryPage: React.FC = () => {
         setTimeout(() => {
           saveChatToHistory(sessionId, 'library');
         }, 500);
-      }, 1000);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        sendMessage(sessionId, { 
+          text: "I apologize, but I'm having trouble processing your request right now. Please try again later.", 
+          sender: 'bot' 
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -526,6 +539,7 @@ const LibraryPage: React.FC = () => {
               message={message}
               setMessage={setMessage}
               handleSendMessage={handleSendMessage}
+              isLoading={isLoading}
             />
           </div>
         </div>

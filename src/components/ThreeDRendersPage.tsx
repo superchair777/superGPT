@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useChat } from '../contexts/ChatContext';
+import { geminiService } from '../services/geminiService';
 import Header from './Header';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
@@ -49,6 +50,7 @@ const ThreeDRendersPage: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleFullscreen = async () => {
     try {
@@ -78,16 +80,19 @@ const ThreeDRendersPage: React.FC = () => {
 
   const totalRenders = 4;
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (message.trim() && !isLoading) {
       sendMessage(sessionId, { text: message, sender: 'user' });
       setMessage('');
+      setIsLoading(true);
       
-      // Mock bot response
-      setTimeout(() => {
+      try {
+        // Get AI response using Gemini for 3D render context
+        const aiResponse = await geminiService.generate3DRenderResponse(message, messages);
+        
         sendMessage(sessionId, { 
-          text: "I've created a new 3D render with your specifications. The model features realistic materials and lighting. Would you like me to adjust the camera angle, materials, or lighting setup?", 
+          text: aiResponse, 
           sender: 'bot' 
         });
         
@@ -95,7 +100,15 @@ const ThreeDRendersPage: React.FC = () => {
         setTimeout(() => {
           saveChatToHistory(sessionId, '3dRenders');
         }, 500);
-      }, 1000);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        sendMessage(sessionId, { 
+          text: "I apologize, but I'm having trouble processing your request right now. Please try again later.", 
+          sender: 'bot' 
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -456,6 +469,7 @@ const ThreeDRendersPage: React.FC = () => {
               message={message}
               setMessage={setMessage}
               handleSendMessage={handleSendMessage}
+              isLoading={isLoading}
             />
           </div>
         </div>

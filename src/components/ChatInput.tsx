@@ -14,9 +14,10 @@ interface ChatInputProps {
   message: string;
   setMessage: (value: string) => void;
   handleSendMessage: (e: React.FormEvent) => void;
+  isLoading?: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ message, setMessage, handleSendMessage }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ message, setMessage, handleSendMessage, isLoading = false }) => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
   const [showTools, setShowTools] = useState(false);
@@ -108,10 +109,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ message, setMessage, handleSendMe
               </button>
               <button
                 type="submit"
-                disabled={!message.trim()}
+                disabled={!message.trim() || isLoading}
                 className={`
                   p-2 rounded-full transition-colors
-                  ${message.trim()
+                  ${message.trim() && !isLoading
                     ? isDark
                       ? 'bg-white text-black hover:bg-gray-200'
                       : 'bg-gray-900 text-white hover:bg-gray-800'
@@ -121,7 +122,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ message, setMessage, handleSendMe
                   }
                 `}
               >
-                <Send size={16} />
+                {isLoading ? (
+                  <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                ) : (
+                  <Send size={16} />
+                )}
               </button>
             </div>
           </div>
