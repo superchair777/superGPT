@@ -35,7 +35,7 @@ const ClientsListPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [selectedClient, setSelectedClient] = useState<typeof clients[0] | null>(null);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [filters, setFilters] = useState({
     minSpending: '',
     maxSpending: '',
@@ -310,9 +310,9 @@ const ClientsListPage: React.FC = () => {
             </div>
             
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => setShowFiltersModal(true)}
               className={`p-2 rounded-lg transition-colors ${
-                showFilters
+                showFiltersModal
                   ? 'bg-blue-600 text-white'
                   : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
               }`}
@@ -323,7 +323,7 @@ const ClientsListPage: React.FC = () => {
         </div>
 
         {/* Search and Filters */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 mb-6 items-center">
           <div className="flex-1 relative">
             <Search size={18} className={`absolute left-3 top-1/2 -translate-y-1/2 ${
               isDark ? 'text-gray-400' : 'text-gray-500'
@@ -361,159 +361,7 @@ const ClientsListPage: React.FC = () => {
               isDark ? 'text-gray-400' : 'text-gray-500'
             }`} />
           </div>
-          
-          {showFilters && (
-            <div className="flex gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                    selectedCategory === category.id
-                      ? 'bg-blue-600 text-white'
-                      : isDark
-                        ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300 border border-gray-600'
-                        : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
-                  }`}
-                >
-                  {category.name} ({category.count})
-                </button>
-              ))}
-              <button
-                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                  showAdvancedFilters
-                    ? 'bg-purple-600 text-white'
-                    : isDark
-                      ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300 border border-gray-600'
-                      : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
-                }`}
-              >
-                Advanced Filters
-              </button>
-            </div>
-          )}
         </div>
-            <div className="flex justify-between items-center">
-              <h3 className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                Filter Options
-              </h3>
-              <button
-                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                  showAdvancedFilters
-                    ? 'bg-purple-600 text-white'
-                    : isDark
-                      ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300 border border-gray-600'
-                      : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
-                }`}
-              >
-                Advanced Filters
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Advanced Filters Panel */}
-        {showAdvancedFilters && (
-          <div className={`p-4 rounded-lg border mb-6 ${
-            isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-gray-50 border-gray-200'
-          }`}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {t('clients.filterBySpending')}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    placeholder={t('clients.minSpending')}
-                    value={filters.minSpending}
-                    onChange={(e) => setFilters({...filters, minSpending: e.target.value})}
-                    className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
-                      isDark 
-                        ? 'bg-[#212121] border-gray-600 text-white' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    }`}
-                  />
-                  <input
-                    type="number"
-                    placeholder={t('clients.maxSpending')}
-                    value={filters.maxSpending}
-                    onChange={(e) => setFilters({...filters, maxSpending: e.target.value})}
-                    className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
-                      isDark 
-                        ? 'bg-[#212121] border-gray-600 text-white' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    }`}
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {t('clients.filterByStatus')}
-                </label>
-                <select
-                  value={filters.status}
-                  onChange={(e) => setFilters({...filters, status: e.target.value})}
-                  className={`w-full px-3 py-2 rounded-lg border text-sm ${
-                    isDark 
-                      ? 'bg-[#212121] border-gray-600 text-white' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                >
-                  <option value="all">{t('clients.allClients')}</option>
-                  <option value="active">{t('clients.active')}</option>
-                  <option value="inactive">{t('clients.inactive')}</option>
-                  <option value="vip">{t('clients.vip')}</option>
-                  <option value="new">{t('clients.new')}</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {t('clients.filterByJoinDate')}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    value={filters.joinDateFrom}
-                    onChange={(e) => setFilters({...filters, joinDateFrom: e.target.value})}
-                    className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
-                      isDark 
-                        ? 'bg-[#212121] border-gray-600 text-white' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    }`}
-                  />
-                  <input
-                    type="date"
-                    value={filters.joinDateTo}
-                    onChange={(e) => setFilters({...filters, joinDateTo: e.target.value})}
-                    className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
-                      isDark 
-                        ? 'bg-[#212121] border-gray-600 text-white' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    }`}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex items-end gap-2">
-                <button
-                  onClick={clearFilters}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isDark
-                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-                  }`}
-                >
-                  {t('clients.clearFilters')}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Clients List */}
         <div className="overflow-y-auto max-h-[calc(100vh-400px)]">
@@ -905,6 +753,211 @@ const ClientsListPage: React.FC = () => {
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Filters Modal */}
+      {showFiltersModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowFiltersModal(false)}
+        >
+          <div 
+            className={`rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden ${
+              isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className={`flex justify-between items-center p-6 border-b ${
+              isDark ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <div>
+                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('clients.filterOptions')}
+                </h2>
+                <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('clients.filterClientsDesc')}
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowFiltersModal(false)} 
+                className={`p-2 rounded-full transition-colors ${
+                  isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                }`}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+              {/* Category Filters */}
+              <div className="mb-8">
+                <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('clients.clientCategories')}
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`p-4 rounded-xl text-left transition-all duration-200 border-2 ${
+                        selectedCategory === category.id
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : isDark
+                            ? 'border-gray-600 bg-gray-700 hover:bg-gray-600 hover:border-gray-500'
+                            : 'border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className={`font-medium text-sm ${
+                        selectedCategory === category.id 
+                          ? 'text-blue-600 dark:text-blue-400' 
+                          : isDark ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        {category.name}
+                      </div>
+                      <div className={`text-xs mt-1 ${
+                        isDark ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        {category.count} {t('clients.clients')}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Advanced Filters */}
+              <div className="space-y-6">
+                <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('clients.advancedFilters')}
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Spending Filter */}
+                  <div className={`p-4 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
+                    <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      <DollarSign size={16} className="inline mr-2" />
+                      {t('clients.filterBySpending')}
+                    </label>
+                    <div className="flex gap-3">
+                      <input
+                        type="number"
+                        placeholder={t('clients.minSpending')}
+                        value={filters.minSpending}
+                        onChange={(e) => setFilters({...filters, minSpending: e.target.value})}
+                        className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
+                          isDark 
+                            ? 'bg-[#2f2f2f] border-gray-600 text-white placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        }`}
+                      />
+                      <input
+                        type="number"
+                        placeholder={t('clients.maxSpending')}
+                        value={filters.maxSpending}
+                        onChange={(e) => setFilters({...filters, maxSpending: e.target.value})}
+                        className={`flex-1 px-3 py-2 rounded-lg border text-sm ${
+                          isDark 
+                            ? 'bg-[#2f2f2f] border-gray-600 text-white placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Status Filter */}
+                  <div className={`p-4 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
+                    <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      <Users size={16} className="inline mr-2" />
+                      {t('clients.filterByStatus')}
+                    </label>
+                    <select
+                      value={filters.status}
+                      onChange={(e) => setFilters({...filters, status: e.target.value})}
+                      className={`w-full px-3 py-2 rounded-lg border text-sm ${
+                        isDark 
+                          ? 'bg-[#2f2f2f] border-gray-600 text-white' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                    >
+                      <option value="all">{t('clients.allClients')}</option>
+                      <option value="active">{t('clients.active')}</option>
+                      <option value="inactive">{t('clients.inactive')}</option>
+                      <option value="vip">{t('clients.vip')}</option>
+                      <option value="new">{t('clients.new')}</option>
+                    </select>
+                  </div>
+                </div>
+                
+                {/* Date Range Filter */}
+                <div className={`p-4 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
+                  <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <Calendar size={16} className="inline mr-2" />
+                    {t('clients.filterByJoinDate')}
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className={`block text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {t('clients.from')}
+                      </label>
+                      <input
+                        type="date"
+                        value={filters.joinDateFrom}
+                        onChange={(e) => setFilters({...filters, joinDateFrom: e.target.value})}
+                        className={`w-full px-3 py-2 rounded-lg border text-sm ${
+                          isDark 
+                            ? 'bg-[#2f2f2f] border-gray-600 text-white' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {t('clients.to')}
+                      </label>
+                      <input
+                        type="date"
+                        value={filters.joinDateTo}
+                        onChange={(e) => setFilters({...filters, joinDateTo: e.target.value})}
+                        className={`w-full px-3 py-2 rounded-lg border text-sm ${
+                          isDark 
+                            ? 'bg-[#2f2f2f] border-gray-600 text-white' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className={`flex justify-between items-center p-6 border-t ${
+              isDark ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                {t('clients.showingResults', { count: sortedClients.length })}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={clearFilters}
+                  className={`px-6 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                    isDark
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                  }`}
+                >
+                  {t('clients.clearFilters')}
+                </button>
+                <button
+                  onClick={() => setShowFiltersModal(false)}
+                  className="px-8 py-3 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-lg hover:shadow-xl"
+                >
+                  {t('clients.applyFilters')}
+                </button>
               </div>
             </div>
           </div>
