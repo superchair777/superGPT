@@ -167,6 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               </div>
               <div>
                 <div className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{user.name}</div>
+                <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.email}</div>
                 <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{user.jobTitle}</div>
               </div>
             </div>

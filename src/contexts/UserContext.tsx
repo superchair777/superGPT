@@ -4,12 +4,13 @@ interface User {
   name: string;
   initials: string;
   jobTitle: string;
+  email: string;
   profilePicture: string | null;
 }
 
 interface UserContextType {
   user: User;
-  updateUser: (name: string, jobTitle: string, profilePicture?: string) => void;
+  updateUser: (name: string, jobTitle: string, email: string, profilePicture?: string) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -19,16 +20,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     name: 'super chair',
     initials: 'SC',
     jobTitle: 'Free',
+    email: 'superchair@example.com',
     profilePicture: null,
   });
 
-  const updateUser = (name: string, jobTitle: string, profilePicture?: string) => {
+  const updateUser = (name: string, jobTitle: string, email: string, profilePicture?: string) => {
     const initials = name
       .split(' ')
       .map((n) => n[0])
       .join('')
       .toUpperCase();
-    setUser({ name, initials, jobTitle, profilePicture: profilePicture || user.profilePicture });
+    setUser({ name, initials, jobTitle, email, profilePicture: profilePicture || user.profilePicture });
   };
 
   return (

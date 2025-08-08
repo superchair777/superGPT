@@ -14,11 +14,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
   const [name, setName] = useState(user.name);
   const [jobTitle, setJobTitle] = useState(user.jobTitle);
+  const [email, setEmail] = useState(user.email);
   const [profilePicture, setProfilePicture] = useState<string | null>(user.profilePicture);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateUser(name, jobTitle, profilePicture || undefined);
+    updateUser(name, jobTitle, email, profilePicture || undefined);
     onClose();
   };
 
@@ -62,6 +63,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className={`w-full px-4 py-2.5 rounded-lg border transition-colors ${
+                isDark
+                  ? 'bg-[#212121] border-gray-600 focus:border-blue-500 text-white'
+                  : 'bg-gray-50 border-gray-300 focus:border-blue-500 text-gray-900'
+              }`}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="email" className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className={`w-full px-4 py-2.5 rounded-lg border transition-colors ${
                 isDark
                   ? 'bg-[#212121] border-gray-600 focus:border-blue-500 text-white'
