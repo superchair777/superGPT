@@ -18,7 +18,8 @@ import {
   Map,
   Box,
   Building2,
-  Users
+  Users,
+  Trash2
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -134,35 +135,57 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               <div className="px-2">
                 {recentChats.length > 0 ? (
                   recentChats.map((chat) => (
-                    <button
+                    <div
                       key={chat.id}
-                      onClick={() => {
-                        // Navigate to the appropriate page and load the chat
-                        setActiveView(chat.pageType);
-                        // You could add logic here to load the specific chat
-                      }}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors truncate group ${
+                      className={`relative w-full text-left px-3 py-2 text-sm rounded-lg transition-colors truncate group ${
                         isDark 
                           ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
                           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="truncate">{chat.title}</span>
-                        <span className={`text-xs opacity-0 group-hover:opacity-100 transition-opacity ${
-                          isDark ? 'text-gray-500' : 'text-gray-400'
-                        }`}>
-                          {chat.pageType === 'chat' ? '💬' : 
-                           chat.pageType === 'library' ? '📚' : 
-                           chat.pageType === 'floorPlan' ? '🏗️' : 
-                           chat.pageType === 'threeDRenders' ? '🎨' : 
-                           chat.pageType === 'companyCatalogue' ? '📦' : '👥'}
-                        </span>
-                      </div>
-                      <div className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                        {new Date(chat.lastActivity).toLocaleDateString()}
-                      </div>
-                    </button>
+                      <button
+                        onClick={() => {
+                          // Navigate to the appropriate page and load the chat
+                          setActiveView(chat.pageType);
+                          // You could add logic here to load the specific chat
+                        }}
+                        className="w-full text-left"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="truncate">{chat.title}</span>
+                          <span className={`text-xs opacity-0 group-hover:opacity-100 transition-opacity ${
+                            isDark ? 'text-gray-500' : 'text-gray-400'
+                          }`}>
+                            {chat.pageType === 'chat' ? '💬' : 
+                             chat.pageType === 'library' ? '📚' : 
+                             chat.pageType === 'floorPlan' ? '🏗️' : 
+                             chat.pageType === 'threeDRenders' ? '🎨' : 
+                             chat.pageType === 'companyCatalogue' ? '📦' : '👥'}
+                          </span>
+                        </div>
+                        <div className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                          {new Date(chat.lastActivity).toLocaleDateString()}
+                        </div>
+                      </button>
+                      
+                      {/* Delete Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Add delete functionality here
+                          console.log('Delete chat:', chat.id);
+                          // You can add a confirmation modal or direct deletion
+                        }}
+                        className={`absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity ${
+                          isDark 
+                            ? 'text-gray-400 hover:text-red-400 hover:bg-gray-600' 
+                            : 'text-gray-500 hover:text-red-500 hover:bg-gray-200'
+                        }`}
+                        title="Delete chat"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   ))
                 ) : (
                   <div className={`px-3 py-4 text-center text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
