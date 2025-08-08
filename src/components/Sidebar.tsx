@@ -30,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
   const { user } = useUser();
-  const { startNewChat } = useChat();
+  const { startNewChat, chatSessions } = useChat();
   const { activeView, setActiveView } = useView();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSearchOpen, setSearchOpen] = useState(false);
@@ -45,12 +45,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { icon: Users, label: t('sidebar.clientsList'), view: 'clientsList' },
   ];
 
-  const chatHistory = [
-    t('chat.logoCreation'),
-    t('chat.exampleChat'),
-    t('chat.projectPlanning'),
-    t('chat.codeReview'),
-  ];
+  // Show recent chat sessions, limit to 10 most recent
+  const recentChats = chatSessions.slice(0, 10);
 
   const isItemActive = (item: typeof menuItems[0]) => {
     if (item.action === 'newChat') {
@@ -136,20 +132,57 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 </h3>
               </div>
               <div className="px-2">
-                {chatHistory.map((chat, index) => (
-                  <button
-                    key={index}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors truncate ${
-                      isDark 
-                        ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
-                  >
-                    {chat}
-                  </button>
-                ))}
+                {recentChats.length > 0 ? (
+                  recentChats.map((chat) => (
+                    <button
+                      key={chat.id}
+                      onClick={() => {
+                        // Navigate to the appropriate page and load the chat
+                        setActiveView(chat.pageType);
+                        // You could add logic here to load the specific chat
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors truncate group ${
+                        isDark 
+                          ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="truncate">{chat.title}</span>
+                        <span className={`text-xs opacity-0 group-hover:opacity-100 transition-opacity ${
+                          isDark ? 'text-gray-500' : 'text-gray-400'
+                        }`}>
+                          {chat.pageType === 'chat' ? '💬' : 
+                           chat.pageType === 'library' ? '📚' : 
+                           chat.pageType === 'floorPlan' ? '🏗️' : 
+                           chat.pageType === 'threeDRenders' ? '🎨' : 
+                           chat.pageType === 'companyCatalogue' ? '📦' : '👥'}
+                        </span>
+                      </div>
+                      <div className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        {new Date(chat.lastActivity).toLocaleDateString()}
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <div className={`px-3 py-4 text-center text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                    No chat history yet
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Show more chats if available */}
+            {chatSessions.length > 10 && (
+              <div className="px-4 py-2">
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  className={`text-xs ${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-500'}`}
+                >
+                  View all {chatSessions.length} chats
+                </button>
+              </div>
+            )}
           </div>
 
           {/* User Section */}

@@ -31,7 +31,7 @@ import {
 const ThreeDRendersPage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const { messages: allMessages, sendMessage } = useChat();
+  const { messages: allMessages, sendMessage, saveChatToHistory } = useChat();
   const sessionId = '3dRender';
   const messages = allMessages[sessionId] || [];
   const [message, setMessage] = useState('');
@@ -90,6 +90,11 @@ const ThreeDRendersPage: React.FC = () => {
           text: "I've created a new 3D render with your specifications. The model features realistic materials and lighting. Would you like me to adjust the camera angle, materials, or lighting setup?", 
           sender: 'bot' 
         });
+        
+        // Auto-save chat to history after bot responds
+        setTimeout(() => {
+          saveChatToHistory(sessionId, '3dRenders');
+        }, 500);
       }, 1000);
     }
   };

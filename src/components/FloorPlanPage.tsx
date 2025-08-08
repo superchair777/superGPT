@@ -13,7 +13,7 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 const FloorPlanPage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const { messages: allMessages, sendMessage } = useChat();
+  const { messages: allMessages, sendMessage, saveChatToHistory } = useChat();
   const sessionId = 'floorPlan';
   const messages = allMessages[sessionId] || [];
   const [message, setMessage] = useState('');
@@ -69,6 +69,11 @@ const FloorPlanPage: React.FC = () => {
           text: "I've generated a new floor plan based on your specifications. The layout optimizes space efficiency while maintaining good traffic flow. Would you like me to adjust any specific elements or create variations?", 
           sender: 'bot' 
         });
+        
+        // Auto-save chat to history after bot responds
+        setTimeout(() => {
+          saveChatToHistory(sessionId, 'floorPlan');
+        }, 500);
       }, 1000);
     }
   };

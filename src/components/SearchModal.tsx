@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useChat } from '../contexts/ChatContext';
 import { Search, X, MessageSquare, Edit2 } from 'lucide-react';
 
 interface SearchModalProps {
@@ -11,16 +12,20 @@ interface SearchModalProps {
 const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
+  const { chatSessions } = useChat();
 
-  const todayChats = [
-    { icon: MessageSquare, label: 'Chair brand comparison' },
-    { icon: MessageSquare, label: 'Becoming a developer' },
-  ];
-
-  const previousChats = [
-    { icon: MessageSquare, label: t('chat.logoCreation') },
-    { icon: MessageSquare, label: t('chat.exampleChat') },
-  ];
+  // Filter chats by date
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const weekAgo = new Date(todayStart.getTime() - 7 * 24 * 60 * 60 * 1000);
+  
+  const todayChats = chatSessions.filter(chat => 
+    new Date(chat.lastActivity) >= todayStart
+  );
+  
+  const previousChats = chatSessions.filter(chat => 
+    new Date(chat.lastActivity) < todayStart && new Date(chat.lastActivity) >= weekAgo
+  );
 
   if (!isOpen) return null;
 
@@ -51,10 +56,51 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
         </div>
         <div className="p-4">
           <h3 className={`text-xs font-medium uppercase tracking-wider mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('search.today')}</h3>
-          {todayChats.map((chat, index) => (
-            <button key={index} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-              <chat.icon size={18} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
-              <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{chat.label}</span>
+          {todayChats.length > 0 ? (
+            todayChats.map((chat) => (
+              <button key={chat.id} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                <MessageSquare size={18} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
+                <div className="flex-1 min-w-0">
+                  <span className={`text-sm block truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{chat.title}</span>
+                  <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {chat.pageType === 'chat' ? '💬 Chat' : 
+                     chat.pageType === 'library' ? '📚 Library' : 
+                     chat.pageType === 'floorPlan' ? '🏗️ Floor Plan' : 
+                     chat.pageType === 'threeDRenders' ? '🎨 3D Render' : 
+                     chat.pageType === 'companyCatalogue' ? '📦 Catalogue' : '👥 Clients'}
+                  </span>
+                </div>
+              </button>
+            ))
+          ) : (
+            <p className={`text-sm px-3 py-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              No chats today
+            </p>
+          )}
+        </div>
+        <div className="p-4 pt-0">
+          <h3 className={`text-xs font-medium uppercase tracking-wider mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('search.previous')}</h3>
+          {previousChats.length > 0 ? (
+            previousChats.map((chat) => (
+              <button key={chat.id} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                <MessageSquare size={18} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
+                <div className="flex-1 min-w-0">
+                  <span className={`text-sm block truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{chat.title}</span>
+                  <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {new Date(chat.lastActivity).toLocaleDateString()} • {chat.pageType === 'chat' ? '💬 Chat' : 
+                     chat.pageType === 'library' ? '📚 Library' : 
+                     chat.pageType === 'floorPlan' ? '🏗️ Floor Plan' : 
+                     chat.pageType === 'threeDRenders' ? '🎨 3D Render' : 
+                     chat.pageType === 'companyCatalogue' ? '📦 Catalogue' : '👥 Clients'}
+                  </span>
+                </div>
+              </button>
+            ))
+          ) : (
+            <p className={`text-sm px-3 py-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              No previous chats
+            </p>
+          )}
             </button>
           ))}
         </div>

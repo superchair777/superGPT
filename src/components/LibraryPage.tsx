@@ -34,7 +34,7 @@ import {
 const LibraryPage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const { messages: allMessages, sendMessage } = useChat();
+  const { messages: allMessages, sendMessage, saveChatToHistory } = useChat();
   const sessionId = 'library';
   const messages = allMessages[sessionId] || [];
   const [message, setMessage] = useState('');
@@ -86,6 +86,11 @@ const LibraryPage: React.FC = () => {
           text: "I've generated new images based on your description. The images are now available in your library. Would you like me to create variations or modify any specific aspects?", 
           sender: 'bot' 
         });
+        
+        // Auto-save chat to history after bot responds
+        setTimeout(() => {
+          saveChatToHistory(sessionId, 'library');
+        }, 500);
       }, 1000);
     }
   };

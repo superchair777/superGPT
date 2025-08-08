@@ -29,7 +29,7 @@ interface Message {
 const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const { messages: allMessages, sendMessage } = useChat();
+  const { messages: allMessages, sendMessage, saveChatToHistory } = useChat();
   const sessionId = 'main';
   const messages = allMessages[sessionId] || [];
   const [message, setMessage] = useState('');
@@ -85,6 +85,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
           sender: 'bot',
         };
         sendMessage(sessionId, botMessage);
+        
+        // Auto-save chat to history after bot responds
+        setTimeout(() => {
+          saveChatToHistory(sessionId, 'chat');
+        }, 500);
       }, 1000);
     }
   };
