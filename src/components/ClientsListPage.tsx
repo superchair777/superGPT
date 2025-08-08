@@ -23,7 +23,8 @@ import {
   MapPin,
   Clock,
   ShoppingBag,
-  BarChart3
+  BarChart3,
+  FileText
 } from 'lucide-react';
 
 const ClientsListPage: React.FC = () => {
@@ -43,6 +44,7 @@ const ClientsListPage: React.FC = () => {
     joinDateFrom: '',
     joinDateTo: ''
   });
+  const [activeTab, setActiveTab] = useState<'overview' | 'communications' | 'notes' | 'pipeline'>('overview');
 
   const categories = [
     { id: 'all', name: t('clients.allClients'), count: 24 },
@@ -50,6 +52,8 @@ const ClientsListPage: React.FC = () => {
     { id: 'inactive', name: t('clients.inactiveClients'), count: 4 },
     { id: 'vip', name: t('clients.vipClients'), count: 6 },
     { id: 'new', name: t('clients.newClients'), count: 3 },
+    { id: 'leads', name: t('clients.leads'), count: 8 },
+    { id: 'prospects', name: t('clients.prospects'), count: 5 },
   ];
 
   const clients = [
@@ -68,6 +72,22 @@ const ClientsListPage: React.FC = () => {
       lastPurchaseDate: '2024-01-15',
       joinDate: '2022-03-10',
       address: 'Bangkok, Thailand',
+      leadStatus: 'customer',
+      pipelineStage: 'closed-won',
+      leadSource: 'referral',
+      assignedSalesperson: 'John Smith',
+      tags: ['VIP', 'Enterprise', 'Long-term'],
+      notes: [
+        { id: 1, date: '2024-01-20', type: 'meeting', title: 'Q1 Planning Meeting', content: 'Discussed expansion plans for 2024. Interested in 50+ additional workstations.', author: 'John Smith' },
+        { id: 2, date: '2024-01-15', type: 'call', title: 'Follow-up Call', content: 'Confirmed delivery of executive chairs. Very satisfied with quality.', author: 'Sarah Johnson' },
+        { id: 3, date: '2024-01-10', type: 'email', title: 'Product Inquiry', content: 'Asked about new ergonomic chair models for their growing team.', author: 'System' }
+      ],
+      communications: [
+        { id: 1, date: '2024-01-20', type: 'meeting', subject: 'Q1 Business Review', participants: ['Somchai Jaidee', 'John Smith'], duration: '60 min', outcome: 'Positive - Planning expansion' },
+        { id: 2, date: '2024-01-15', type: 'phone', subject: 'Delivery Confirmation', participants: ['Somchai Jaidee', 'Sarah Johnson'], duration: '15 min', outcome: 'Satisfied with delivery' },
+        { id: 3, date: '2024-01-10', type: 'email', subject: 'Product Catalog Request', participants: ['Somchai Jaidee'], duration: null, outcome: 'Sent latest catalog' },
+        { id: 4, date: '2024-01-05', type: 'meeting', subject: 'Contract Negotiation', participants: ['Somchai Jaidee', 'John Smith', 'Legal Team'], duration: '90 min', outcome: 'Contract signed' }
+      ],
       purchaseHistory: [
         { id: 1, date: '2024-01-15', value: 125000, status: 'completed', items: 'Executive Chairs x8, Conference Table x1' },
         { id: 2, date: '2023-12-08', value: 89000, status: 'completed', items: 'Storage Cabinets x6, Desks x4' },
@@ -91,6 +111,17 @@ const ClientsListPage: React.FC = () => {
       lastPurchaseDate: '2024-01-20',
       joinDate: '2021-08-15',
       address: 'Chiang Mai, Thailand',
+      leadStatus: 'customer',
+      pipelineStage: 'closed-won',
+      leadSource: 'website',
+      assignedSalesperson: 'Mike Chen',
+      tags: ['VIP', 'Tech', 'High-Value'],
+      notes: [
+        { id: 1, date: '2024-01-22', type: 'meeting', title: 'Strategic Partnership Discussion', content: 'Exploring long-term partnership opportunities. Potential for bulk orders.', author: 'Mike Chen' }
+      ],
+      communications: [
+        { id: 1, date: '2024-01-20', type: 'meeting', subject: 'Partnership Discussion', participants: ['Niran Techaporn', 'Mike Chen'], duration: '45 min', outcome: 'Exploring partnership' }
+      ],
       purchaseHistory: [
         { id: 1, date: '2024-01-20', value: 95000, status: 'completed', items: 'Ergonomic Workstations x10' },
         { id: 2, date: '2024-01-05', value: 145000, status: 'completed', items: 'Executive Office Suite' },
@@ -112,6 +143,17 @@ const ClientsListPage: React.FC = () => {
       lastPurchaseDate: '2024-01-10',
       joinDate: '2023-01-20',
       address: 'Phuket, Thailand',
+      leadStatus: 'customer',
+      pipelineStage: 'closed-won',
+      leadSource: 'trade-show',
+      assignedSalesperson: 'Lisa Wong',
+      tags: ['Sustainable', 'Green-Energy'],
+      notes: [
+        { id: 1, date: '2024-01-12', type: 'call', title: 'Sustainability Requirements', content: 'Emphasized need for eco-friendly furniture options. Interested in our sustainable product line.', author: 'Lisa Wong' }
+      ],
+      communications: [
+        { id: 1, date: '2024-01-10', type: 'email', subject: 'Sustainable Furniture Options', participants: ['Pranee Suksawat'], duration: null, outcome: 'Sent eco-friendly catalog' }
+      ],
       purchaseHistory: [
         { id: 1, date: '2024-01-10', value: 85000, status: 'completed', items: 'Sustainable Office Furniture' },
         { id: 2, date: '2023-11-28', value: 120000, status: 'completed', items: 'Open Office Layout' }
@@ -132,6 +174,17 @@ const ClientsListPage: React.FC = () => {
       lastPurchaseDate: '2024-01-18',
       joinDate: '2023-12-01',
       address: 'Bangkok, Thailand',
+      leadStatus: 'lead',
+      pipelineStage: 'negotiation',
+      leadSource: 'cold-outreach',
+      assignedSalesperson: 'Tom Wilson',
+      tags: ['Startup', 'Growth-Potential'],
+      notes: [
+        { id: 1, date: '2024-01-19', type: 'meeting', title: 'Initial Consultation', content: 'New startup with rapid growth. Need scalable furniture solutions.', author: 'Tom Wilson' }
+      ],
+      communications: [
+        { id: 1, date: '2024-01-18', type: 'meeting', subject: 'Initial Consultation', participants: ['Kamon Rattanakul', 'Tom Wilson'], duration: '30 min', outcome: 'Interested in startup package' }
+      ],
       purchaseHistory: [
         { id: 1, date: '2024-01-18', value: 65000, status: 'completed', items: 'Startup Office Package' },
         { id: 2, date: '2024-01-02', value: 35000, status: 'pending', items: 'Additional Workstations' }
@@ -152,6 +205,17 @@ const ClientsListPage: React.FC = () => {
       lastPurchaseDate: '2024-01-12',
       joinDate: '2020-05-10',
       address: 'Bangkok, Thailand',
+      leadStatus: 'customer',
+      pipelineStage: 'closed-won',
+      leadSource: 'referral',
+      assignedSalesperson: 'David Park',
+      tags: ['VIP', 'Financial', 'Premium'],
+      notes: [
+        { id: 1, date: '2024-01-14', type: 'meeting', title: 'Luxury Office Setup', content: 'Requires premium materials and finishes. Budget is not a concern for quality.', author: 'David Park' }
+      ],
+      communications: [
+        { id: 1, date: '2024-01-12', type: 'meeting', subject: 'Executive Suite Planning', participants: ['Siriporn Wongchai', 'David Park'], duration: '75 min', outcome: 'Approved luxury package' }
+      ],
       purchaseHistory: [
         { id: 1, date: '2024-01-12', value: 180000, status: 'completed', items: 'Luxury Executive Suite' },
         { id: 2, date: '2023-12-20', value: 95000, status: 'completed', items: 'Client Meeting Area' }
@@ -172,6 +236,17 @@ const ClientsListPage: React.FC = () => {
       lastPurchaseDate: '2023-08-15',
       joinDate: '2022-11-05',
       address: 'Rayong, Thailand',
+      leadStatus: 'prospect',
+      pipelineStage: 'follow-up',
+      leadSource: 'website',
+      assignedSalesperson: 'Anna Lee',
+      tags: ['Manufacturing', 'Inactive'],
+      notes: [
+        { id: 1, date: '2023-09-01', type: 'call', title: 'Follow-up Attempt', content: 'Left voicemail. No response to recent outreach attempts.', author: 'Anna Lee' }
+      ],
+      communications: [
+        { id: 1, date: '2023-08-15', type: 'email', subject: 'Thank you for your purchase', participants: ['Thanakit Somboon'], duration: null, outcome: 'Order completed' }
+      ],
       purchaseHistory: [
         { id: 1, date: '2023-08-15', value: 75000, status: 'completed', items: 'Office Administration Setup' },
         { id: 2, date: '2023-06-10', value: 110000, status: 'completed', items: 'Management Office Furniture' }
@@ -180,10 +255,14 @@ const ClientsListPage: React.FC = () => {
   ];
 
   const filteredClients = clients.filter(client => {
-    const matchesCategory = selectedCategory === 'all' || client.status === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || 
+                           client.status === selectedCategory || 
+                           (selectedCategory === 'leads' && client.leadStatus === 'lead') ||
+                           (selectedCategory === 'prospects' && client.leadStatus === 'prospect');
     const matchesSearch = client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          client.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         client.email.toLowerCase().includes(searchQuery.toLowerCase());
+                         client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         client.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
     // Advanced filters
     const matchesSpending = (!filters.minSpending || client.totalSpent >= parseInt(filters.minSpending)) &&
@@ -229,6 +308,27 @@ const ClientsListPage: React.FC = () => {
         return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
       case 'new':
         return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      default:
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+    }
+  };
+
+  const getPipelineStageColor = (stage: string) => {
+    switch (stage) {
+      case 'lead':
+        return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'qualified':
+        return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      case 'proposal':
+        return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+      case 'negotiation':
+        return 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300';
+      case 'closed-won':
+        return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      case 'closed-lost':
+        return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+      case 'follow-up':
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
       default:
         return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
     }
@@ -400,6 +500,12 @@ const ClientsListPage: React.FC = () => {
                     <div className="flex items-center justify-between mb-3">
                       <span className={`px-2 py-1 text-xs rounded-full font-medium ${getStatusColor(client.status)}`}>
                         {t(`clients.${client.status}`)}
+                      </span>
+                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${getPipelineStageColor(client.pipelineStage)}`}>
+                        {t(`clients.pipeline.${client.pipelineStage.replace('-', '')}`)}
+                      </span>
+                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${getPipelineStageColor(client.pipelineStage)}`}>
+                        {t(`clients.pipeline.${client.pipelineStage.replace('-', '')}`)}
                       </span>
                       {client.status === 'vip' && (
                         <Star size={16} className="text-yellow-400 fill-current" />
@@ -596,6 +702,9 @@ const ClientsListPage: React.FC = () => {
                     <span className={`px-2 py-1 text-xs rounded-full font-medium ${getStatusColor(selectedClient.status)}`}>
                       {t(`clients.${selectedClient.status}`)}
                     </span>
+                    <span className={`px-2 py-1 text-xs rounded-full font-medium ${getPipelineStageColor(selectedClient.pipelineStage)}`}>
+                      {t(`clients.pipeline.${selectedClient.pipelineStage.replace('-', '')}`)}
+                    </span>
                     {selectedClient.status === 'vip' && (
                       <Star size={16} className="text-yellow-400 fill-current" />
                     )}
@@ -613,9 +722,36 @@ const ClientsListPage: React.FC = () => {
             </div>
 
             <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Client Information */}
-                <div className="lg:col-span-1 space-y-6">
+              {/* Tab Navigation */}
+              <div className="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
+                {[
+                  { id: 'overview', label: t('clients.tabs.overview'), icon: User },
+                  { id: 'communications', label: t('clients.tabs.communications'), icon: Phone },
+                  { id: 'notes', label: t('clients.tabs.notes'), icon: FileText },
+                  { id: 'pipeline', label: t('clients.tabs.pipeline'), icon: BarChart3 }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-blue-600 text-white'
+                        : isDark
+                          ? 'text-gray-300 hover:text-white hover:bg-gray-700'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    <tab.icon size={16} />
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab Content */}
+              {activeTab === 'overview' && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Client Information */}
+                  <div className="lg:col-span-1 space-y-6">
                   {/* Contact Information */}
                   <div className={`p-4 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
                     <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -652,6 +788,31 @@ const ClientsListPage: React.FC = () => {
                           {t('clients.clientSince')}: {formatDate(selectedClient.joinDate)}
                         </span>
                       </div>
+                      <div className="flex items-center gap-3">
+                        <User size={16} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('clients.assignedTo')}: {selectedClient.assignedSalesperson}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className={`p-4 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
+                    <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {t('clients.tags')}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedClient.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className={`px-3 py-1 text-sm rounded-full ${
+                            isDark ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'
+                          }`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                   </div>
 
@@ -703,57 +864,252 @@ const ClientsListPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                  </div>
 
-                {/* Purchase History */}
-                <div className="lg:col-span-2">
-                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {t('clients.purchaseHistory')}
-                  </h3>
-                  <div className="space-y-4">
-                    {selectedClient.purchaseHistory.map((order) => (
-                      <div
-                        key={order.id}
-                        className={`p-4 rounded-xl border ${
-                          isDark ? 'bg-[#212121] border-gray-600' : 'bg-gray-50 border-gray-200'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2 rounded-lg ${isDark ? 'bg-blue-600' : 'bg-blue-100'}`}>
-                              <ShoppingBag size={16} className={isDark ? 'text-white' : 'text-blue-600'} />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                  Order #{order.id}
-                                </span>
-                                <span className={`px-2 py-1 text-xs rounded-full font-medium ${getOrderStatusColor(order.status)}`}>
-                                  {t(`clients.${order.status}`)}
+                  {/* Purchase History */}
+                  <div className="lg:col-span-2">
+                    <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {t('clients.purchaseHistory')}
+                    </h3>
+                    <div className="space-y-4">
+                      {selectedClient.purchaseHistory.map((order) => (
+                        <div
+                          key={order.id}
+                          className={`p-4 rounded-xl border ${
+                            isDark ? 'bg-[#212121] border-gray-600' : 'bg-gray-50 border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2 rounded-lg ${isDark ? 'bg-blue-600' : 'bg-blue-100'}`}>
+                                <ShoppingBag size={16} className={isDark ? 'text-white' : 'text-blue-600'} />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                    Order #{order.id}
+                                  </span>
+                                  <span className={`px-2 py-1 text-xs rounded-full font-medium ${getOrderStatusColor(order.status)}`}>
+                                    {t(`clients.${order.status}`)}
+                                  </span>
+                                </div>
+                                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  {formatDate(order.date)}
                                 </span>
                               </div>
-                              <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                {formatDate(order.date)}
-                              </span>
+                            </div>
+                            <div className="text-right">
+                              <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                {formatPrice(order.value)}
+                              </div>
+                              <button className={`text-sm text-blue-600 hover:text-blue-700 transition-colors`}>
+                                {t('clients.viewOrder')}
+                              </button>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                              {formatPrice(order.value)}
-                            </div>
-                            <button className={`text-sm text-blue-600 hover:text-blue-700 transition-colors`}>
-                              {t('clients.viewOrder')}
-                            </button>
-                          </div>
+                          <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {order.items}
+                          </p>
                         </div>
-                        <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {order.items}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {/* Communications Tab */}
+              {activeTab === 'communications' && (
+                <div className="space-y-4">
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {t('clients.communicationHistory')}
+                  </h3>
+                  {selectedClient.communications.map((comm) => (
+                    <div
+                      key={comm.id}
+                      className={`p-4 rounded-xl border ${
+                        isDark ? 'bg-[#212121] border-gray-600' : 'bg-gray-50 border-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${
+                            comm.type === 'meeting' ? 'bg-blue-100 dark:bg-blue-900' :
+                            comm.type === 'phone' ? 'bg-green-100 dark:bg-green-900' :
+                            'bg-purple-100 dark:bg-purple-900'
+                          }`}>
+                            {comm.type === 'meeting' ? (
+                              <Users size={16} className={comm.type === 'meeting' ? 'text-blue-600 dark:text-blue-400' : ''} />
+                            ) : comm.type === 'phone' ? (
+                              <Phone size={16} className="text-green-600 dark:text-green-400" />
+                            ) : (
+                              <Mail size={16} className="text-purple-600 dark:text-purple-400" />
+                            )}
+                          </div>
+                          <div>
+                            <h4 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              {comm.subject}
+                            </h4>
+                            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                              <span>{formatDate(comm.date)}</span>
+                              {comm.duration && <span>{comm.duration}</span>}
+                              <span className="capitalize">{comm.type}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mb-2">
+                        <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('clients.participants')}: {comm.participants.join(', ')}
+                        </span>
+                      </div>
+                      <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <strong>{t('clients.outcome')}:</strong> {comm.outcome}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Notes Tab */}
+              {activeTab === 'notes' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {t('clients.notesAndInteractions')}
+                    </h3>
+                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                      {t('clients.addNote')}
+                    </button>
+                  </div>
+                  {selectedClient.notes.map((note) => (
+                    <div
+                      key={note.id}
+                      className={`p-4 rounded-xl border ${
+                        isDark ? 'bg-[#212121] border-gray-600' : 'bg-gray-50 border-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${
+                            note.type === 'meeting' ? 'bg-blue-100 dark:bg-blue-900' :
+                            note.type === 'call' ? 'bg-green-100 dark:bg-green-900' :
+                            'bg-orange-100 dark:bg-orange-900'
+                          }`}>
+                            {note.type === 'meeting' ? (
+                              <Users size={16} className="text-blue-600 dark:text-blue-400" />
+                            ) : note.type === 'call' ? (
+                              <Phone size={16} className="text-green-600 dark:text-green-400" />
+                            ) : (
+                              <Mail size={16} className="text-orange-600 dark:text-orange-400" />
+                            )}
+                          </div>
+                          <div>
+                            <h4 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              {note.title}
+                            </h4>
+                            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                              <span>{formatDate(note.date)}</span>
+                              <span>by {note.author}</span>
+                              <span className="capitalize">{note.type}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {note.content}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pipeline Tab */}
+              {activeTab === 'pipeline' && (
+                <div className="space-y-6">
+                  <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {t('clients.salesPipeline')}
+                  </h3>
+                  
+                  {/* Pipeline Status */}
+                  <div className={`p-6 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('clients.leadStatus')}
+                        </label>
+                        <span className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                          selectedClient.leadStatus === 'lead' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' :
+                          selectedClient.leadStatus === 'prospect' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
+                          'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                        }`}>
+                          {t(`clients.leadStatus.${selectedClient.leadStatus}`)}
+                        </span>
+                      </div>
+                      
+                      <div>
+                        <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('clients.pipelineStage')}
+                        </label>
+                        <span className={`px-3 py-2 rounded-lg text-sm font-medium ${getPipelineStageColor(selectedClient.pipelineStage)}`}>
+                          {t(`clients.pipeline.${selectedClient.pipelineStage.replace('-', '')}`)}
+                        </span>
+                      </div>
+                      
+                      <div>
+                        <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('clients.leadSource')}
+                        </label>
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t(`clients.leadSource.${selectedClient.leadSource.replace('-', '')}`)}
+                        </span>
+                      </div>
+                      
+                      <div>
+                        <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('clients.assignedSalesperson')}
+                        </label>
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {selectedClient.assignedSalesperson}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Pipeline Progress */}
+                  <div className={`p-6 rounded-xl ${isDark ? 'bg-[#212121]' : 'bg-gray-50'}`}>
+                    <h4 className={`text-md font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {t('clients.pipelineProgress')}
+                    </h4>
+                    <div className="space-y-3">
+                      {[
+                        { stage: 'lead', label: t('clients.pipeline.lead') },
+                        { stage: 'qualified', label: t('clients.pipeline.qualified') },
+                        { stage: 'proposal', label: t('clients.pipeline.proposal') },
+                        { stage: 'negotiation', label: t('clients.pipeline.negotiation') },
+                        { stage: 'closed-won', label: t('clients.pipeline.closedwon') }
+                      ].map((stage, index) => {
+                        const isActive = selectedClient.pipelineStage === stage.stage;
+                        const isPassed = ['lead', 'qualified', 'proposal', 'negotiation'].indexOf(selectedClient.pipelineStage) > index;
+                        
+                        return (
+                          <div key={stage.stage} className="flex items-center gap-3">
+                            <div className={`w-4 h-4 rounded-full ${
+                              isActive ? 'bg-blue-600' : isPassed ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
+                            }`} />
+                            <span className={`text-sm ${
+                              isActive ? 'font-semibold text-blue-600 dark:text-blue-400' :
+                              isPassed ? 'text-green-600 dark:text-green-400' :
+                              'text-gray-500 dark:text-gray-400'
+                            }`}>
+                              {stage.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

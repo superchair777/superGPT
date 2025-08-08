@@ -382,6 +382,49 @@ const translations = {
     'clients.clientCategories': 'Client Categories',
     'clients.advancedFilters': 'Advanced Filters',
     'clients.showingResults': 'Showing {count} results',
+    
+    // Additional client management features
+    'clients.leads': 'Leads',
+    'clients.prospects': 'Prospects',
+    'clients.assignedTo': 'Assigned to',
+    'clients.tags': 'Tags',
+    'clients.communicationHistory': 'Communication History',
+    'clients.notesAndInteractions': 'Notes & Interactions',
+    'clients.addNote': 'Add Note',
+    'clients.participants': 'Participants',
+    'clients.outcome': 'Outcome',
+    'clients.salesPipeline': 'Sales Pipeline',
+    'clients.leadStatus': 'Lead Status',
+    'clients.pipelineStage': 'Pipeline Stage',
+    'clients.leadSource': 'Lead Source',
+    'clients.assignedSalesperson': 'Assigned Salesperson',
+    'clients.pipelineProgress': 'Pipeline Progress',
+    
+    // Tab labels
+    'clients.tabs.overview': 'Overview',
+    'clients.tabs.communications': 'Communications',
+    'clients.tabs.notes': 'Notes',
+    'clients.tabs.pipeline': 'Pipeline',
+    
+    // Lead Status
+    'clients.leadStatus.lead': 'Lead',
+    'clients.leadStatus.prospect': 'Prospect',
+    'clients.leadStatus.customer': 'Customer',
+    
+    // Pipeline Stages
+    'clients.pipeline.lead': 'Lead',
+    'clients.pipeline.qualified': 'Qualified',
+    'clients.pipeline.proposal': 'Proposal',
+    'clients.pipeline.negotiation': 'Negotiation',
+    'clients.pipeline.closedwon': 'Closed Won',
+    'clients.pipeline.closedlost': 'Closed Lost',
+    'clients.pipeline.followup': 'Follow Up',
+    
+    // Lead Sources
+    'clients.leadSource.website': 'Website',
+    'clients.leadSource.referral': 'Referral',
+    'clients.leadSource.coldoutreach': 'Cold Outreach',
+    'clients.leadSource.tradeshow': 'Trade Show',
   },
   th: {
     // Header
@@ -757,6 +800,49 @@ const translations = {
     'clients.clientCategories': 'หมวดหมู่ลูกค้า',
     'clients.advancedFilters': 'ตัวกรองขั้นสูง',
     'clients.showingResults': 'แสดง {count} ผลลัพธ์',
+    
+    // Additional client management features
+    'clients.leads': 'ลีด',
+    'clients.prospects': 'ผู้มีแนวโน้ม',
+    'clients.assignedTo': 'มอบหมายให้',
+    'clients.tags': 'แท็ก',
+    'clients.communicationHistory': 'ประวัติการสื่อสาร',
+    'clients.notesAndInteractions': 'บันทึกและการปฏิสัมพันธ์',
+    'clients.addNote': 'เพิ่มบันทึก',
+    'clients.participants': 'ผู้เข้าร่วม',
+    'clients.outcome': 'ผลลัพธ์',
+    'clients.salesPipeline': 'ไปป์ไลน์การขาย',
+    'clients.leadStatus': 'สถานะลีด',
+    'clients.pipelineStage': 'ขั้นตอนไปป์ไลน์',
+    'clients.leadSource': 'แหล่งที่มาของลีด',
+    'clients.assignedSalesperson': 'พนักงานขายที่รับผิดชอบ',
+    'clients.pipelineProgress': 'ความคืบหน้าไปป์ไลน์',
+    
+    // Tab labels
+    'clients.tabs.overview': 'ภาพรวม',
+    'clients.tabs.communications': 'การสื่อสาร',
+    'clients.tabs.notes': 'บันทึก',
+    'clients.tabs.pipeline': 'ไปป์ไลน์',
+    
+    // Lead Status
+    'clients.leadStatus.lead': 'ลีด',
+    'clients.leadStatus.prospect': 'ผู้มีแนวโน้ม',
+    'clients.leadStatus.customer': 'ลูกค้า',
+    
+    // Pipeline Stages
+    'clients.pipeline.lead': 'ลีด',
+    'clients.pipeline.qualified': 'ผ่านการคัดกรอง',
+    'clients.pipeline.proposal': 'เสนอราคา',
+    'clients.pipeline.negotiation': 'เจรจา',
+    'clients.pipeline.closedwon': 'ปิดการขาย-สำเร็จ',
+    'clients.pipeline.closedlost': 'ปิดการขาย-ไม่สำเร็จ',
+    'clients.pipeline.followup': 'ติดตาม',
+    
+    // Lead Sources
+    'clients.leadSource.website': 'เว็บไซต์',
+    'clients.leadSource.referral': 'การแนะนำ',
+    'clients.leadSource.coldoutreach': 'การติดต่อเชิงรุก',
+    'clients.leadSource.tradeshow': 'งานแสดงสินค้า',
   },
 };
 
