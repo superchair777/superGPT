@@ -425,6 +425,26 @@ const translations = {
     'clients.leadSource.referral': 'Referral',
     'clients.leadSource.coldoutreach': 'Cold Outreach',
     'clients.leadSource.tradeshow': 'Trade Show',
+
+    // Tasks
+    'tasks.taskManagement': 'Task Management',
+    'tasks.manageYourTasks': 'Manage your ongoing tasks and track progress',
+    'tasks.addTask': 'Add Task',
+    'tasks.addNewTask': 'Add New Task',
+    'tasks.searchTasks': 'Search tasks...',
+    'tasks.all': 'All',
+    'tasks.pending': 'Pending',
+    'tasks.inProgress': 'In Progress',
+    'tasks.completed': 'Completed',
+    'tasks.noTasksFound': 'No tasks found',
+    'tasks.noTasksDesc': 'Try adjusting your search or filters, or add a new task',
+    'tasks.taskTitle': 'Task title',
+    'tasks.taskDescription': 'Task description',
+    'tasks.category': 'Category',
+    'tasks.low': 'Low',
+    'tasks.medium': 'Medium',
+    'tasks.high': 'High',
+    'tasks.overdue': 'Overdue',
   },
   th: {
     // Header
@@ -843,6 +863,26 @@ const translations = {
     'clients.leadSource.referral': 'การแนะนำ',
     'clients.leadSource.coldoutreach': 'การติดต่อเชิงรุก',
     'clients.leadSource.tradeshow': 'งานแสดงสินค้า',
+
+    // Tasks
+    'tasks.taskManagement': 'การจัดการงาน',
+    'tasks.manageYourTasks': 'จัดการงานที่กำลังดำเนินการและติดตามความคืบหน้า',
+    'tasks.addTask': 'เพิ่มงาน',
+    'tasks.addNewTask': 'เพิ่มงานใหม่',
+    'tasks.searchTasks': 'ค้นหางาน...',
+    'tasks.all': 'ทั้งหมด',
+    'tasks.pending': 'รอดำเนินการ',
+    'tasks.inProgress': 'กำลังดำเนินการ',
+    'tasks.completed': 'เสร็จสิ้น',
+    'tasks.noTasksFound': 'ไม่พบงาน',
+    'tasks.noTasksDesc': 'ลองปรับการค้นหาหรือตัวกรอง หรือเพิ่มงานใหม่',
+    'tasks.taskTitle': 'ชื่องาน',
+    'tasks.taskDescription': 'รายละเอียดงาน',
+    'tasks.category': 'หมวดหมู่',
+    'tasks.low': 'ต่ำ',
+    'tasks.medium': 'ปานกลาง',
+    'tasks.high': 'สูง',
+    'tasks.overdue': 'เกินกำหนด',
   },
 };
 

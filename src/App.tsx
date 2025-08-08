@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { UserProvider } from './contexts/UserContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { TaskProvider } from './contexts/TaskContext';
 import { ChatProvider } from './contexts/ChatContext';
 import { ViewProvider, useView } from './contexts/ViewContext';
 import Sidebar from './components/Sidebar';
@@ -46,25 +47,27 @@ function App() {
       <LanguageProvider>
         <UserProvider>
           <NotificationProvider>
-            <ChatProvider>
-              <ViewProvider>
-                <div className="h-screen bg-[#212121] dark:bg-[#212121] bg-white flex overflow-hidden">
-                  {/* Mobile menu button */}
-                  <button
-                    onClick={toggleSidebar}
-                    className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-gray-700 text-white hover:bg-gray-600 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  >
-                    <Menu size={20} />
-                  </button>
+            <TaskProvider>
+              <ChatProvider>
+                <ViewProvider>
+                  <div className="h-screen bg-[#212121] dark:bg-[#212121] bg-white flex overflow-hidden">
+                    {/* Mobile menu button */}
+                    <button
+                      onClick={toggleSidebar}
+                      className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-gray-700 text-white hover:bg-gray-600 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    >
+                      <Menu size={20} />
+                    </button>
 
-                  {/* Sidebar */}
-                  <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-                  
-                  {/* Main Content */}
-                  <MainContent sidebarOpen={sidebarOpen} />
-                </div>
-              </ViewProvider>
-            </ChatProvider>
+                    {/* Sidebar */}
+                    <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+                    
+                    {/* Main Content */}
+                    <MainContent sidebarOpen={sidebarOpen} />
+                  </div>
+                </ViewProvider>
+              </ChatProvider>
+            </TaskProvider>
           </NotificationProvider>
         </UserProvider>
       </LanguageProvider>
