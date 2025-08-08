@@ -7,7 +7,7 @@ export class GeminiService {
   private model;
 
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   }
 
   async generateResponse(message: string, context?: string): Promise<string> {
