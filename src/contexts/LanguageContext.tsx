@@ -377,6 +377,11 @@ const translations = {
     'clients.maxSpending': 'Max Spending',
     'clients.from': 'From',
     'clients.to': 'To',
+    'clients.filterOptions': 'Filter Options',
+    'clients.filterClientsDesc': 'Filter and organize your client list based on various criteria',
+    'clients.clientCategories': 'Client Categories',
+    'clients.advancedFilters': 'Advanced Filters',
+    'clients.showingResults': 'Showing {count} results',
   },
   th: {
     // Header
@@ -747,6 +752,11 @@ const translations = {
     'clients.maxSpending': 'ยอดใช้จ่ายสูงสุด',
     'clients.from': 'จาก',
     'clients.to': 'ถึง',
+    'clients.filterOptions': 'ตัวเลือกการกรอง',
+    'clients.filterClientsDesc': 'กรองและจัดระเบียบรายชื่อลูกค้าของคุณตามเกณฑ์ต่างๆ',
+    'clients.clientCategories': 'หมวดหมู่ลูกค้า',
+    'clients.advancedFilters': 'ตัวกรองขั้นสูง',
+    'clients.showingResults': 'แสดง {count} ผลลัพธ์',
   },
 };
 

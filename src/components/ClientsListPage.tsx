@@ -394,6 +394,25 @@ const ClientsListPage: React.FC = () => {
             </div>
           )}
         </div>
+            <div className="flex justify-between items-center">
+              <h3 className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                Filter Options
+              </h3>
+              <button
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  showAdvancedFilters
+                    ? 'bg-purple-600 text-white'
+                    : isDark
+                      ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300 border border-gray-600'
+                      : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
+                }`}
+              >
+                Advanced Filters
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Advanced Filters Panel */}
         {showAdvancedFilters && (
