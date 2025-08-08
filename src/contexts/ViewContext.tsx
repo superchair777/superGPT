@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type View = 'chat' | 'library' | 'floorPlan' | 'threeDRenders' | 'companyCatalogue';
+type View = 'chat' | 'library' | 'floorPlan' | 'threeDRenders' | 'companyCatalogue' | 'clientsList';
 
 interface ViewContextType {
   activeView: View;
