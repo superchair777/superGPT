@@ -20,6 +20,7 @@ const translations = {
     'sidebar.sora': 'Floor plans',
     'sidebar.gpts': '3D Renders',
     'sidebar.companyCatalogue': 'Company Catalogue',
+    'sidebar.clientsList': 'Clients List',
     'sidebar.chats': 'Chats',
     'sidebar.userStatus': 'Free',
     
@@ -388,6 +389,7 @@ const translations = {
     'sidebar.sora': 'แบบแปลนพื้น',
     'sidebar.gpts': 'เรนเดอร์ 3 มิติ',
     'sidebar.companyCatalogue': 'แคตตาล็อกบริษัท',
+    'sidebar.clientsList': 'รายชื่อลูกค้า',
     'sidebar.clientsList': 'รายชื่อลูกค้า',
     'sidebar.chats': 'แชท',
     'sidebar.userStatus': 'ฟรี',
