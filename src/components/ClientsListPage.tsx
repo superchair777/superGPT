@@ -562,7 +562,7 @@ const ClientsListPage: React.FC = () => {
           )}
         </div>
       </div>
-      
+
       {/* Client Detail Modal */}
       {selectedClient && (
         <div 
