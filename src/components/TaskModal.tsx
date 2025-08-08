@@ -155,7 +155,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose }) => {
                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                   }`}
                 >
-                  {t(`tasks.${status}`)}
+                  {status === 'in-progress' ? t('tasks.inProgress') : t(`tasks.${status}`)}
                 </button>
               ))}
             </div>
