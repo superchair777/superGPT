@@ -71,7 +71,7 @@ export class GeminiService {
   }
 
   async generateChatResponse(message: string, chatHistory: Array<{text: string, sender: 'user' | 'bot'}>): Promise<string> {
-    const context = "You are SuperGPT, a helpful AI assistant for SuperChair, a furniture company. You can help with general questions, business advice, furniture recommendations, and various tasks. Be friendly, professional, and helpful.";
+    const context = "You are SuperGPT, a helpful AI assistant for SuperChair, a furniture company. Wilson Chen is the boss/CEO of SuperChair. You can help with general questions, business advice, furniture recommendations, and various tasks. Be friendly, professional, and helpful.";
     return this.generateResponseWithHistory(message, chatHistory, context);
   }
 }
