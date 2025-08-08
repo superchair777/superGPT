@@ -157,11 +157,6 @@ const ThreeDRendersPage: React.FC = () => {
               <h2 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {t('threeDRenders.threeDRenderViewer')}
               </h2>
-              <span className={`px-3 py-1 text-xs rounded-full ${
-                isDark ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-700'
-              }`}>
-                {t('threeDRenders.highQuality')}
-              </span>
             </div>
             
             {/* Viewer Controls */}
