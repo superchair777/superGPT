@@ -101,17 +101,6 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
               No previous chats
             </p>
           )}
-            </button>
-          ))}
-        </div>
-        <div className="p-4 pt-0">
-          <h3 className={`text-xs font-medium uppercase tracking-wider mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('search.previous')}</h3>
-          {previousChats.map((chat, index) => (
-            <button key={index} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-              <chat.icon size={18} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
-              <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>{chat.label}</span>
-            </button>
-          ))}
         </div>
       </div>
     </div>
