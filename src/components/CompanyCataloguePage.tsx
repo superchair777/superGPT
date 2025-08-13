@@ -16,15 +16,14 @@ import {
   DollarSign,
   Star,
   X,
-  CheckCircle
+  CheckCircle,
   Package,
   Maximize2,
-  X,
   Upload,
   FileImage,
   Zap,
   Calculator,
-  CheckCircle
+  ChevronDown
 } from 'lucide-react';
 
 const CompanyCataloguePage: React.FC = () => {
@@ -45,6 +44,8 @@ const CompanyCataloguePage: React.FC = () => {
   const [showQuotationModal, setShowQuotationModal] = useState(false);
   const [selectedProductForQuotation, setSelectedProductForQuotation] = useState<typeof products[0] | null>(null);
   const [quotationQuantity, setQuotationQuantity] = useState(1);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const categories = [
     { id: 'all', name: t('catalogue.allProducts'), count: 24 },
@@ -306,8 +307,14 @@ const CompanyCataloguePage: React.FC = () => {
       total: selectedProductForQuotation.price * quotationQuantity
     });
     
-    // Show success message
-    alert(`Added ${quotationQuantity} ${selectedProductForQuotation.name}(s) to quotation!`);
+    // Show success toast
+    setToastMessage(`Added ${quotationQuantity} ${selectedProductForQuotation.name}${quotationQuantity > 1 ? 's' : ''} to quotation!`);
+    setShowSuccessToast(true);
+    
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      setShowSuccessToast(false);
+    }, 3000);
     
     // Close modal
     setShowQuotationModal(false);
@@ -1213,30 +1220,6 @@ const CompanyCataloguePage: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Success Toast Notification */}
-      {showSuccessToast && (
-        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
-          <div className={`flex items-center gap-3 px-6 py-4 rounded-lg shadow-lg border ${
-            isDark 
-              ? 'bg-green-900 border-green-700 text-green-100' 
-              : 'bg-green-50 border-green-200 text-green-800'
-          }`}>
-            <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
-            <span className="font-medium">{toastMessage}</span>
-            <button
-              onClick={() => setShowSuccessToast(false)}
-              className={`ml-2 p-1 rounded-full transition-colors ${
-                isDark 
-                  ? 'hover:bg-green-800 text-green-300' 
-                  : 'hover:bg-green-100 text-green-600'
-              }`}
-            >
-              <X size={16} />
-            </button>
           </div>
         </div>
       )}
