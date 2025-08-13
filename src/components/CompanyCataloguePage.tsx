@@ -72,6 +72,7 @@ const CompanyCataloguePage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
