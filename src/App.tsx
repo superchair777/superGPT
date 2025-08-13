@@ -29,6 +29,8 @@ const MainContent: React.FC<{ sidebarOpen: boolean }> = ({ sidebarOpen }) => {
       return <CompanyCataloguePage />;
     case 'clientsList':
       return <ClientsListPage />;
+    case 'calendar':
+      return <CalendarPage />;
     case 'chat':
     default:
       return <ChatArea sidebarOpen={sidebarOpen} />;

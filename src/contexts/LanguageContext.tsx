@@ -458,7 +458,7 @@ const translations = {
     'sidebar.gpts': 'เรนเดอร์ 3 มิติ',
     'sidebar.companyCatalogue': 'แคตตาล็อกบริษัท',
     'sidebar.clientsList': 'รายชื่อลูกค้า',
-    'sidebar.clientsList': 'รายชื่อลูกค้า',
+    'sidebar.calendar': 'ปฏิทิน',
     'sidebar.chats': 'แชท',
     'sidebar.userStatus': 'ฟรี',
     

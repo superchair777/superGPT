@@ -44,6 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     { icon: Box, label: t('sidebar.gpts'), view: 'threeDRenders' },
     { icon: Building2, label: t('sidebar.companyCatalogue'), view: 'companyCatalogue' },
     { icon: Users, label: t('sidebar.clientsList'), view: 'clientsList' },
+    { icon: Calendar, label: t('sidebar.calendar'), view: 'calendar' },
   ];
 
   // Show recent chat sessions, limit to 10 most recent
