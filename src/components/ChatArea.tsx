@@ -3,6 +3,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useChat } from '../contexts/ChatContext';
 import { geminiService } from '../services/geminiService';
+import { checkAvailableModels } from '../utils/checkGeminiModels';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import Header from './Header';
@@ -36,6 +37,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({ sidebarOpen }) => {
   const [message, setMessage] = useState('');
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check available models on component mount (development only)
+  React.useEffect(() => {
+    if (import.meta.env.DEV) {
+      checkAvailableModels();
+    }
+  }, []);
 
   const allActions = [
     { icon: Image, label: t('actions.createImage'), color: 'text-green-400' },
