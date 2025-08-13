@@ -258,7 +258,7 @@ const CalendarPage: React.FC = () => {
       days.push(
         <div
           key={day}
-          className={`h-32 border border-gray-200 dark:border-gray-700 p-2 overflow-y-auto ${
+          className={`h-32 border border-gray-200 dark:border-gray-700 p-2 overflow-y-auto hover:overflow-y-auto ${
             isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''
           }`}
         >
@@ -307,7 +307,7 @@ const CalendarPage: React.FC = () => {
     <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
       <Header />
       
-      <div className="flex-1 p-6 min-h-0">
+      <div className="flex-1 p-6 overflow-y-auto">
         {/* Calendar Header */}
         <div className={`flex items-center justify-between p-6 rounded-xl border mb-6 ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
@@ -417,7 +417,7 @@ const CalendarPage: React.FC = () => {
         </div>
 
         {/* Calendar Grid */}
-        <div className={`rounded-xl border overflow-hidden ${
+        <div className={`rounded-xl border overflow-visible ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
         }`}>
           {/* Days of week header */}
@@ -437,7 +437,7 @@ const CalendarPage: React.FC = () => {
           </div>
           
           {/* Calendar days */}
-          <div className="grid grid-cols-7">
+          <div className="grid grid-cols-7 min-h-0">
             {renderCalendarGrid()}
           </div>
         </div>
