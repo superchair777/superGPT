@@ -2,195 +2,220 @@ import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useChat } from '../contexts/ChatContext';
+import { geminiService } from '../services/geminiService';
 import Header from './Header';
+import ChatInput from './ChatInput';
+import ChatMessage from './ChatMessage';
+import ExportModal from './ExportModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
-  ShoppingCart, 
-  Heart, 
-  Share2, 
-  Eye,
-  Ruler,
-  DollarSign,
+  Search,
+  Filter,
+  Grid3X3,
+  List,
+  SlidersHorizontal,
   Star,
-  X,
-  CheckCircle,
-  Package,
-  Maximize2,
+  Heart,
+  ShoppingCart,
+  Eye,
+  Share2,
+  Trash2,
   Upload,
   FileImage,
-  Zap,
-  Calculator,
-  ChevronDown
+  Building2,
+  Package,
+  Plus,
+  Minus,
+  X,
+  CheckCircle
 } from 'lucide-react';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  category: string;
+  inStock: boolean;
+  onSale: boolean;
+  dimensions: string;
+  materials: string[];
+  colors: string[];
+  features: string[];
+  description: string;
+}
 
 const CompanyCataloguePage: React.FC = () => {
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const { sendMessage } = useChat();
+  const { messages: allMessages, sendMessage, saveChatToHistory } = useChat();
+  const sessionId = 'companyCatalogue';
+  const messages = allMessages[sessionId] || [];
+  const [message, setMessage] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('name');
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [analysisResults, setAnalysisResults] = useState<any>(null);
   const [showQuotationModal, setShowQuotationModal] = useState(false);
-  const [selectedProductForQuotation, setSelectedProductForQuotation] = useState<typeof products[0] | null>(null);
-  const [quotationQuantity, setQuotationQuantity] = useState(1);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim() && !isLoading) {
+      sendMessage(sessionId, { text: message, sender: 'user' });
+      setMessage('');
+      setIsLoading(true);
+      
+      try {
+        const aiResponse = await geminiService.generateChatResponse(message, messages);
+        
+        sendMessage(sessionId, { 
+          text: aiResponse, 
+          sender: 'bot' 
+        });
+        
+        setTimeout(() => {
+          saveChatToHistory(sessionId, 'companyCatalogue');
+        }, 500);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        sendMessage(sessionId, { 
+          text: "I apologize, but I'm having trouble processing your request right now. Please try again later.", 
+          sender: 'bot' 
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   const categories = [
     { id: 'all', name: t('catalogue.allProducts'), count: 24 },
     { id: 'chairs', name: t('catalogue.chairs'), count: 8 },
     { id: 'tables', name: t('catalogue.tables'), count: 6 },
-    { id: 'cabinets', name: t('catalogue.cabinets'), count: 5 },
+    { id: 'cabinets', name: t('catalogue.cabinets'), count: 4 },
     { id: 'desks', name: t('catalogue.desks'), count: 3 },
-    { id: 'storage', name: t('catalogue.storage'), count: 2 },
+    { id: 'storage', name: t('catalogue.storage'), count: 3 },
   ];
 
-  const products = [
+  const products: Product[] = [
     {
       id: 1,
-      name: 'SuperChair Executive',
-      category: 'chairs',
-      price: 15900,
-      originalPrice: 18900,
-      currency: '฿',
-      image: 'https://images.pexels.com/photos/586763/pexels-photo-586763.jpeg?auto=compress&cs=tinysrgb&w=800',
-      rating: 4.8,
-      reviews: 124,
+      name: 'Conference Table Elite',
+      price: 45900,
+      rating: 4.9,
+      reviews: 127,
+      image: '/placeholder1.svg',
+      category: 'tables',
       inStock: true,
-      dimensions: {
-        width: 65,
-        depth: 70,
-        height: 120,
-        seatHeight: 45,
-        unit: 'cm'
-      },
-      materials: ['Genuine Leather', 'Steel Frame', 'Memory Foam'],
-      colors: ['Black', 'Brown', 'White'],
-      features: ['Ergonomic Design', 'Height Adjustable', '360° Swivel', 'Lumbar Support'],
-      description: 'Premium executive chair with genuine leather upholstery and advanced ergonomic features.'
+      onSale: false,
+      dimensions: '240 × 120 × 75 cm',
+      materials: ['Premium Oak Wood', 'Steel Frame'],
+      colors: ['Natural Oak', 'Dark Walnut', 'White'],
+      features: ['Cable Management', 'Adjustable Height', 'Scratch Resistant'],
+      description: 'Premium conference table designed for executive meetings and boardrooms.'
     },
     {
       id: 2,
-      name: 'ModernDesk Pro',
-      category: 'desks',
-      price: 24900,
-      currency: '฿',
-      image: 'https://images.pexels.com/photos/667838/pexels-photo-667838.jpeg?auto=compress&cs=tinysrgb&w=800',
-      rating: 4.6,
+      name: 'Ergonomic Task Chair',
+      price: 8900,
+      originalPrice: 11900,
+      rating: 4.4,
       reviews: 89,
+      image: '/placeholder2.svg',
+      category: 'chairs',
       inStock: true,
-      dimensions: {
-        width: 160,
-        depth: 80,
-        height: 75,
-        unit: 'cm'
-      },
-      materials: ['Oak Wood', 'Steel Legs', 'Laminate Surface'],
-      colors: ['Natural Oak', 'Walnut', 'White'],
-      features: ['Cable Management', 'Adjustable Feet', 'Scratch Resistant'],
-      description: 'Modern office desk with built-in cable management and premium oak finish.'
+      onSale: true,
+      dimensions: '60 × 60 × 110 cm',
+      materials: ['Mesh Fabric', 'Aluminum Base'],
+      colors: ['Black', 'Gray', 'Blue'],
+      features: ['Lumbar Support', '360° Swivel', 'Height Adjustable'],
+      description: 'Comfortable ergonomic chair perfect for long working hours.'
     },
     {
       id: 3,
-      name: 'Conference Table Elite',
+      name: 'Meeting Table Round',
+      price: 18900,
+      rating: 4.7,
+      reviews: 156,
+      image: '/placeholder3.svg',
       category: 'tables',
-      price: 45900,
-      currency: '฿',
-      image: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800',
-      rating: 4.9,
-      reviews: 67,
       inStock: true,
-      dimensions: {
-        width: 240,
-        depth: 120,
-        height: 75,
-        unit: 'cm'
-      },
-      materials: ['Solid Wood', 'Steel Base', 'Glass Top'],
-      colors: ['Dark Walnut', 'Light Oak'],
-      features: ['Seats 8 People', 'Cable Ports', 'Scratch Resistant Glass'],
-      description: 'Premium conference table perfect for executive meetings and presentations.'
+      onSale: false,
+      dimensions: 'Ø120cm × H75cm',
+      materials: ['Solid Wood', 'Metal Legs'],
+      colors: ['Natural', 'Espresso', 'White'],
+      features: ['Round Design', 'Stable Base', 'Easy Assembly'],
+      description: 'Perfect round meeting table for collaborative discussions.'
     },
     {
       id: 4,
-      name: 'Storage Cabinet Max',
-      category: 'cabinets',
-      price: 12900,
-      currency: '฿',
-      image: 'https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=800',
-      rating: 4.5,
-      reviews: 156,
+      name: 'ModernDesk Pro',
+      price: 24900,
+      rating: 4.6,
+      reviews: 203,
+      image: '/placeholder4.svg',
+      category: 'desks',
       inStock: false,
-      dimensions: {
-        width: 80,
-        depth: 40,
-        height: 180,
-        unit: 'cm'
-      },
-      materials: ['MDF', 'Metal Handles', 'Soft-Close Hinges'],
-      colors: ['White', 'Gray', 'Black'],
-      features: ['4 Shelves', 'Lockable', 'Soft-Close Doors', 'Anti-Tip'],
-      description: 'Spacious storage cabinet with multiple shelves and security lock.'
+      onSale: false,
+      dimensions: '160 × 80 × 75 cm',
+      materials: ['Laminated Wood', 'Steel Frame'],
+      colors: ['White', 'Black', 'Oak'],
+      features: ['Built-in USB Ports', 'Cable Management', 'Drawer Storage'],
+      description: 'Modern desk with integrated technology features for the digital workplace.'
     },
     {
       id: 5,
-      name: 'Ergonomic Task Chair',
-      category: 'chairs',
-      price: 8900,
-      originalPrice: 11900,
-      currency: '฿',
-      image: 'https://images.pexels.com/photos/1957477/pexels-photo-1957477.jpeg?auto=compress&cs=tinysrgb&w=800',
-      rating: 4.4,
-      reviews: 203,
+      name: 'Executive Storage Cabinet',
+      price: 32900,
+      rating: 4.8,
+      reviews: 94,
+      image: '/placeholder1.svg',
+      category: 'cabinets',
       inStock: true,
-      dimensions: {
-        width: 60,
-        depth: 60,
-        height: 110,
-        seatHeight: 42,
-        unit: 'cm'
-      },
-      materials: ['Mesh Back', 'Fabric Seat', 'Plastic Base'],
-      colors: ['Black', 'Gray', 'Blue'],
-      features: ['Breathable Mesh', 'Height Adjustable', 'Tilt Function'],
-      description: 'Comfortable task chair with breathable mesh back and ergonomic support.'
+      onSale: false,
+      dimensions: '120 × 45 × 180 cm',
+      materials: ['Premium Wood', 'Soft-Close Hinges'],
+      colors: ['Mahogany', 'Cherry', 'Black'],
+      features: ['Locking Doors', 'Adjustable Shelves', 'Anti-Tip Design'],
+      description: 'Elegant storage solution for executive offices and meeting rooms.'
     },
     {
       id: 6,
-      name: 'Meeting Table Round',
+      name: 'Collaborative Workspace Table',
+      price: 15900,
+      rating: 4.3,
+      reviews: 67,
+      image: '/placeholder2.svg',
       category: 'tables',
-      price: 18900,
-      currency: '฿',
-      image: 'https://images.pexels.com/photos/1571463/pexels-photo-1571463.jpeg?auto=compress&cs=tinysrgb&w=800',
-      rating: 4.7,
-      reviews: 45,
       inStock: true,
-      dimensions: {
-        diameter: 120,
-        height: 75,
-        unit: 'cm'
-      },
-      materials: ['Laminate Top', 'Steel Pedestal', 'ABS Edge'],
-      colors: ['White', 'Maple', 'Cherry'],
-      features: ['Seats 4 People', 'Stable Base', 'Easy Assembly'],
-      description: 'Round meeting table ideal for small team discussions and brainstorming.'
+      onSale: true,
+      dimensions: '180 × 90 × 75 cm',
+      materials: ['Engineered Wood', 'Powder Coated Steel'],
+      colors: ['Light Gray', 'Natural', 'White'],
+      features: ['Modular Design', 'Easy Reconfiguration', 'Durable Surface'],
+      description: 'Flexible table system perfect for modern collaborative workspaces.'
     }
   ];
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          product.materials.some(material => material.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
@@ -209,217 +234,175 @@ const CompanyCataloguePage: React.FC = () => {
     }
   });
 
-  const toggleFavorite = (productId: number) => {
-    setFavorites(prev => 
-      prev.includes(productId) 
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
-  };
-
-  const formatPrice = (price: number, currency: string) => {
-    return `${currency}${price.toLocaleString()}`;
-  };
-
-  const formatDimensions = (dimensions: any) => {
-    if (dimensions.diameter) {
-      return `⌀${dimensions.diameter}${dimensions.unit} × H${dimensions.height}${dimensions.unit}`;
-    }
-    return `${dimensions.width} × ${dimensions.depth} × ${dimensions.height} ${dimensions.unit}`;
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUploadedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      setUploadedFile(file);
     }
   };
 
-  const analyzeFloorPlan = async () => {
-    if (!uploadedImage) return;
+  const handleAnalyzeFloorPlan = () => {
+    if (!uploadedFile) return;
     
     setIsAnalyzing(true);
     
-    // Simulate AI analysis
+    // Simulate analysis process
     setTimeout(() => {
-      const mockAnalysis = {
-        detectedProducts: [
-          { product: products[0], quantity: 4, confidence: 95 }, // SuperChair Executive
-          { product: products[2], quantity: 1, confidence: 92 }, // Conference Table Elite
-          { product: products[3], quantity: 2, confidence: 88 }, // Storage Cabinet Max
-          { product: products[1], quantity: 2, confidence: 85 }, // ModernDesk Pro
+      setAnalysisResults({
+        detectedItems: [
+          { name: 'Conference Table', quantity: 2, confidence: 95, price: 45900 },
+          { name: 'Office Chairs', quantity: 12, confidence: 88, price: 8900 },
+          { name: 'Storage Cabinets', quantity: 4, confidence: 92, price: 32900 },
+          { name: 'Meeting Table', quantity: 1, confidence: 85, price: 18900 },
         ],
-        totalCost: 0,
-        roomType: 'Executive Office',
-        area: '45 m²'
-      };
-      
-      // Calculate total cost
-      mockAnalysis.totalCost = mockAnalysis.detectedProducts.reduce((total, item) => {
-        return total + (item.product.price * item.quantity);
-      }, 0);
-      
-      setAnalysisResult(mockAnalysis);
-      setIsAnalyzing(false);
-      
-      // Send analysis to chat
-      const sessionId = 'catalogue-analysis';
-      sendMessage(sessionId, {
-        text: `Floor plan analysis complete! I've identified ${mockAnalysis.detectedProducts.length} product types in your ${mockAnalysis.roomType} layout. Total estimated cost: ${formatPrice(mockAnalysis.totalCost, '฿')}`,
-        sender: 'bot'
+        totalEstimate: (2 * 45900) + (12 * 8900) + (4 * 32900) + (1 * 18900)
       });
+      setIsAnalyzing(false);
     }, 3000);
   };
 
-  const generateQuotation = () => {
-    if (!analysisResult) return;
-    
-    const quotationData = {
-      date: new Date().toLocaleDateString(),
-      products: analysisResult.detectedProducts,
-      total: analysisResult.totalCost,
-      roomType: analysisResult.roomType,
-      area: analysisResult.area
-    };
-    
-    // In a real app, this would generate a PDF or send to backend
-    console.log('Generating quotation:', quotationData);
-    alert('Quotation generated successfully! Check your downloads folder.');
-  };
-
-  const handleAddToQuotation = (product: typeof products[0]) => {
-    setSelectedProductForQuotation(product);
-    setQuotationQuantity(1);
+  const handleAddToQuotation = (product: Product) => {
+    setSelectedProduct(product);
+    setQuantity(1);
     setShowQuotationModal(true);
   };
 
-  const confirmAddToQuotation = () => {
-    if (!selectedProductForQuotation) return;
-    
-    // In a real app, this would add to a quotation state/context
-    console.log('Adding to quotation:', {
-      product: selectedProductForQuotation,
-      quantity: quotationQuantity,
-      total: selectedProductForQuotation.price * quotationQuantity
-    });
-    
-    // Show success toast
-    setToastMessage(`Added ${quotationQuantity} ${selectedProductForQuotation.name}${quotationQuantity > 1 ? 's' : ''} to quotation!`);
-    setShowSuccessToast(true);
-    
-    // Hide toast after 3 seconds
-    setTimeout(() => {
-      setShowSuccessToast(false);
-    }, 3000);
-    
-    // Close modal
-    setShowQuotationModal(false);
-    setSelectedProductForQuotation(null);
+  const handleConfirmQuotation = () => {
+    if (selectedProduct) {
+      // Show toast notification
+      setToastMessage(`Added ${quantity} ${selectedProduct.name}${quantity > 1 ? 's' : ''} to quotation!`);
+      setShowToast(true);
+      
+      // Auto-hide toast after 3 seconds
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+      
+      // Close modal
+      setShowQuotationModal(false);
+      setSelectedProduct(null);
+      setQuantity(1);
+      
+      console.log('Added to quotation:', {
+        product: selectedProduct.name,
+        quantity: quantity,
+        unitPrice: selectedProduct.price,
+        totalPrice: selectedProduct.price * quantity
+      });
+    }
+  };
+
+  const adjustQuantity = (change: number) => {
+    setQuantity(prev => Math.max(1, Math.min(999, prev + change)));
   };
 
   return (
-    <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
-      <Header />
+    <div className={`flex-1 flex flex-col ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
+      <Header sessionId={sessionId} />
       
-      <div className="flex-1 p-6 min-h-0">
-        {/* Page Header */}
-        <div className={`flex items-center justify-between p-6 rounded-xl border mb-6 ${
-          isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
-        } shadow-sm`}>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowUploadModal(true)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  isDark ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white'
-                }`}
-              >
-                <Upload size={18} />
-                <span className="text-sm font-medium">{t('catalogue.uploadFloorPlan')}</span>
-              </button>
-              
-              <Package size={28} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
-              <div>
+      <div className="flex-1 flex gap-6 p-6 overflow-hidden">
+        {/* Main Catalogue Area */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Catalogue Header */}
+          <div className={`flex items-center justify-between p-4 rounded-xl border mb-6 ${
+            isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
+          } shadow-sm`}>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Building2 size={24} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
                 <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                   {t('catalogue.companyProducts')}
                 </h1>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {t('catalogue.premiumFurniture')}
-                </p>
               </div>
-            </div>
-            <span className={`px-3 py-1 text-sm rounded-full ${
-              isDark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'
-            }`}>
-              {sortedProducts.length} {t('catalogue.products')}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === 'grid'
-                    ? 'bg-blue-600 text-white'
-                    : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                }`}
-              >
-                <Grid3X3 size={18} />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === 'list'
-                    ? 'bg-blue-600 text-white'
-                    : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                }`}
-              >
-                <List size={18} />
-              </button>
+              <span className={`px-3 py-1 text-sm rounded-full ${
+                isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+              }`}>
+                {filteredProducts.length} {t('catalogue.products')}
+              </span>
             </div>
             
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`p-2 rounded-lg transition-colors ${
-                showFilters
-                  ? 'bg-blue-600 text-white'
-                  : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-              }`}
-            >
-              <Filter size={18} />
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Export and Delete Buttons */}
+              <button 
+                onClick={() => setShowExport(true)} 
+                className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
+                  isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Share2 size={18} />
+                <span className="text-sm sr-only">Export</span>
+              </button>
+              <button 
+                onClick={() => setShowDelete(true)} 
+                className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
+                  isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Trash2 size={18} />
+                <span className="text-sm sr-only">Delete</span>
+              </button>
+              
+              <div className="w-px h-6 bg-gray-300 mx-2" />
+              
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-lg transition-colors ${
+                    viewMode === 'grid'
+                      ? 'bg-blue-600 text-white'
+                      : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
+                  }`}
+                >
+                  <Grid3X3 size={18} />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-lg transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-blue-600 text-white'
+                      : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
+                  }`}
+                >
+                  <List size={18} />
+                </button>
+              </div>
+              
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showFilters
+                    ? 'bg-blue-600 text-white'
+                    : isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
+                }`}
+              >
+                <Filter size={18} />
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Search and Filters */}
-        <div className="flex gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search size={18} className={`absolute left-3 top-1/2 -translate-y-1/2 ${
-              isDark ? 'text-gray-400' : 'text-gray-500'
-            }`} />
-            <input
-              type="text"
-              placeholder={t('catalogue.searchProducts')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
-                isDark 
-                  ? 'bg-[#2f2f2f] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
-                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
-              }`}
-            />
-          </div>
-          
-          <div className="relative">
+          {/* Search and Filters */}
+          <div className="flex gap-4 mb-6">
+            <div className="flex-1 relative">
+              <Search size={18} className={`absolute left-3 top-1/2 -translate-y-1/2 ${
+                isDark ? 'text-gray-400' : 'text-gray-500'
+              }`} />
+              <input
+                type="text"
+                placeholder={t('catalogue.searchProducts')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
+                  isDark 
+                    ? 'bg-[#2f2f2f] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
+                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
+                }`}
+              />
+            </div>
+            
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className={`px-4 py-3 rounded-lg border transition-colors appearance-none pr-10 ${
+              className={`px-4 py-3 rounded-lg border transition-colors ${
                 isDark 
                   ? 'bg-[#2f2f2f] border-gray-600 text-white focus:border-blue-500' 
                   : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
@@ -430,647 +413,414 @@ const CompanyCataloguePage: React.FC = () => {
               <option value="price-high">{t('catalogue.sortByPriceHigh')}</option>
               <option value="rating">{t('catalogue.sortByRating')}</option>
             </select>
-            <ChevronDown size={16} className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${
-              isDark ? 'text-gray-400' : 'text-gray-500'
-            }`} />
+            
+            {showFilters && (
+              <div className="flex gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                      selectedCategory === category.id
+                        ? 'bg-blue-600 text-white'
+                        : isDark
+                          ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300 border border-gray-600'
+                          : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
+                    }`}
+                  >
+                    {category.name} ({category.count})
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          
-          {showFilters && (
-            <div className="flex gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                    selectedCategory === category.id
-                      ? 'bg-blue-600 text-white'
-                      : isDark
-                        ? 'bg-[#2f2f2f] hover:bg-gray-600 text-gray-300 border border-gray-600'
-                        : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300'
-                  }`}
-                >
-                  {category.name} ({category.count})
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
 
-        {/* Products Grid/List */}
-        <div className="overflow-y-auto max-h-[calc(100vh-300px)]">
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {sortedProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className={`group rounded-xl border transition-all duration-300 hover:shadow-xl ${
-                    isDark 
-                      ? 'bg-[#2f2f2f] border-gray-600 hover:border-gray-500' 
-                      : 'bg-white border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="relative aspect-square rounded-t-xl overflow-hidden">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
-                      onClick={() => setSelectedProduct(product)}
-                    />
-                    {!product.inStock && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          {t('catalogue.outOfStock')}
-                        </span>
-                      </div>
-                    )}
-                    {product.originalPrice && (
-                      <div className="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">
-                        {t('catalogue.sale')}
-                      </div>
-                    )}
-                    <div className="absolute top-3 right-3 flex gap-2">
-                      <button
-                        onClick={() => toggleFavorite(product.id)}
-                        className={`p-2 rounded-full transition-colors ${
-                          favorites.includes(product.id)
-                            ? 'bg-red-500 text-white'
-                            : 'bg-white bg-opacity-80 text-gray-700 hover:bg-opacity-100'
-                        }`}
-                      >
-                        <Heart size={16} fill={favorites.includes(product.id) ? 'currentColor' : 'none'} />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center gap-1">
-                        <Star size={14} className="text-yellow-400 fill-current" />
-                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                          {product.rating}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 mb-3">
-                      <Ruler size={14} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
-                      <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {formatDimensions(product.dimensions)}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {formatPrice(product.price, product.currency)}
-                      </span>
-                      {product.originalPrice && (
-                        <span className={`text-sm line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                          {formatPrice(product.originalPrice, product.currency)}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleAddToQuotation(product)}
-                        disabled={!product.inStock}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                          product.inStock
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
-                      >
-                        <ShoppingCart size={16} />
-                        {t('catalogue.addToQuotation')}
-                      </button>
-                      <button
-                        onClick={() => setSelectedProduct(product)}
-                        className={`p-2 rounded-lg transition-colors ${
-                          isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        <Eye size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {sortedProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className={`flex gap-6 p-6 rounded-xl border transition-colors ${
-                    isDark 
-                      ? 'bg-[#2f2f2f] border-gray-600 hover:bg-gray-600' 
-                      : 'bg-white border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
-                    <img 
-                      src={product.image} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover cursor-pointer" 
-                      onClick={() => setSelectedProduct(product)}
-                    />
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className={`font-semibold text-xl ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {product.name}
-                        </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Star size={16} className="text-yellow-400 fill-current" />
-                          <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                            {product.rating} ({product.reviews} {t('catalogue.reviews')})
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => toggleFavorite(product.id)}
-                        className={`p-2 rounded-full transition-colors ${
-                          favorites.includes(product.id)
-                            ? 'bg-red-500 text-white'
-                            : isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        <Heart size={18} fill={favorites.includes(product.id) ? 'currentColor' : 'none'} />
-                      </button>
-                    </div>
-                    
-                    <p className={`text-sm mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {product.description}
-                    </p>
-                    
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <Ruler size={14} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
-                          <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            {t('catalogue.dimensions')}
-                          </span>
-                        </div>
-                        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {formatDimensions(product.dimensions)}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <Package size={14} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
-                          <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                            {t('catalogue.materials')}
-                          </span>
-                        </div>
-                        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {product.materials.join(', ')}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {formatPrice(product.price, product.currency)}
-                        </span>
-                        {product.originalPrice && (
-                          <span className={`text-lg line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {formatPrice(product.originalPrice, product.currency)}
+          {/* Product Grid/List */}
+          <div className="flex-1 overflow-y-auto">
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {sortedProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className={`group rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                      isDark ? 'bg-[#2f2f2f] border border-gray-600' : 'bg-white border border-gray-200'
+                    }`}
+                  >
+                    <div className="relative aspect-square bg-gray-200 dark:bg-gray-700">
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      {/* Badges */}
+                      <div className="absolute top-2 left-2 flex flex-col gap-1">
+                        {product.onSale && (
+                          <span className="px-2 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
+                            {t('catalogue.sale')}
                           </span>
                         )}
                         {!product.inStock && (
-                          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="px-2 py-1 bg-gray-500 text-white text-xs font-medium rounded-full">
                             {t('catalogue.outOfStock')}
                           </span>
                         )}
                       </div>
                       
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setSelectedProduct(product)}
-                          className={`px-4 py-2 rounded-lg transition-colors ${
-                            isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          <Eye size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleAddToQuotation(product)}
-                          disabled={!product.inStock}
-                          className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            product.inStock
-                              ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          }`}
-                        >
-                          <ShoppingCart size={16} />
-                          {t('catalogue.addToQuotation')}
-                        </button>
+                      {/* Favorite Button */}
+                      <button className="absolute top-2 right-2 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Heart size={16} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
+                      </button>
+                      
+                      {/* Quick Actions */}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <div className="flex gap-2">
+                          <button className="p-2 bg-white rounded-full text-gray-900 hover:bg-gray-100 transition-colors">
+                            <Eye size={16} />
+                          </button>
+                          <button className="p-2 bg-white rounded-full text-gray-900 hover:bg-gray-100 transition-colors">
+                            <Share2 size={16} />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          
-          {sortedProducts.length === 0 && (
-            <div className="text-center py-12">
-              <Package size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
-              <h3 className={`text-lg font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {t('catalogue.noProductsFound')}
-              </h3>
-              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                {t('catalogue.tryDifferentSearch')}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Product Detail Modal */}
-      {selectedProduct && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedProduct(null)}
-        >
-          <div 
-            className={`rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden ${
-              isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className={`flex justify-between items-center p-6 border-b ${
-              isDark ? 'border-gray-700' : 'border-gray-200'
-            }`}>
-              <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                {selectedProduct.name}
-              </h2>
-              <button 
-                onClick={() => setSelectedProduct(null)} 
-                className={`p-2 rounded-full transition-colors ${
-                  isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                }`}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Product Image */}
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
-                  <img 
-                    src={selectedProduct.image} 
-                    alt={selectedProduct.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                {/* Product Details */}
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Star size={20} className="text-yellow-400 fill-current" />
-                    <span className={`text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {selectedProduct.rating}
-                    </span>
-                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      ({selectedProduct.reviews} {t('catalogue.reviews')})
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {formatPrice(selectedProduct.price, selectedProduct.currency)}
-                    </span>
-                    {selectedProduct.originalPrice && (
-                      <span className={`text-xl line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                        {formatPrice(selectedProduct.originalPrice, selectedProduct.currency)}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <p className={`text-base mb-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                    {selectedProduct.description}
-                  </p>
-                  
-                  {/* Specifications */}
-                  <div className="space-y-4 mb-6">
-                    <div>
-                      <h4 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {t('catalogue.dimensions')}
-                      </h4>
-                      <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {formatDimensions(selectedProduct.dimensions)}
+                    
+                    <div className="p-4">
+                      <div className="flex items-center gap-1 mb-2">
+                        <Star size={14} className="text-yellow-400 fill-current" />
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                          {product.rating} ({product.reviews} {t('catalogue.reviews')})
+                        </span>
+                      </div>
+                      
+                      <h3 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {product.name}
+                      </h3>
+                      
+                      <p className={`text-sm mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {product.dimensions}
                       </p>
-                    </div>
-                    
-                    <div>
-                      <h4 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {t('catalogue.materials')}
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedProduct.materials.map((material, index) => (
-                          <span
-                            key={index}
-                            className={`px-3 py-1 text-sm rounded-full ${
-                              isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
-                            }`}
-                          >
-                            {material}
+                      
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            ฿{product.price.toLocaleString()}
                           </span>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {t('catalogue.availableColors')}
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedProduct.colors.map((color, index) => (
-                          <span
-                            key={index}
-                            className={`px-3 py-1 text-sm rounded-full ${
-                              isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
-                            }`}
-                          >
-                            {color}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {t('catalogue.features')}
-                      </h4>
-                      <ul className={`space-y-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {selectedProduct.features.map((feature, index) => (
-                          <li key={index} className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => handleAddToQuotation(selectedProduct)}
-                      disabled={!selectedProduct.inStock}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-medium transition-colors ${
-                        selectedProduct.inStock
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                    >
-                      <ShoppingCart size={20} />
-                      {selectedProduct.inStock ? t('catalogue.addToQuotation') : t('catalogue.outOfStock')}
-                    </button>
-                    <button
-                      onClick={() => toggleFavorite(selectedProduct.id)}
-                      className={`p-3 rounded-lg transition-colors ${
-                        favorites.includes(selectedProduct.id)
-                          ? 'bg-red-500 text-white'
-                          : isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                      }`}
-                    >
-                      <Heart size={20} fill={favorites.includes(selectedProduct.id) ? 'currentColor' : 'none'} />
-                    </button>
-                    <button
-                      className={`p-3 rounded-lg transition-colors ${
-                        isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                      }`}
-                    >
-                      <Share2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Floor Plan Upload Modal */}
-      {showUploadModal && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
-          onClick={() => setShowUploadModal(false)}
-        >
-          <div 
-            className={`rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden ${
-              isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className={`flex justify-between items-center p-6 border-b ${
-              isDark ? 'border-gray-700' : 'border-gray-200'
-            }`}>
-              <div>
-                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  {t('catalogue.uploadFloorPlan')}
-                </h2>
-                <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {t('catalogue.uploadFloorPlanDesc')}
-                </p>
-              </div>
-              <button 
-                onClick={() => setShowUploadModal(false)} 
-                className={`p-2 rounded-full transition-colors ${
-                  isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                }`}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Upload Area */}
-                <div>
-                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {t('catalogue.uploadImage')}
-                  </h3>
-                  
-                  {!uploadedImage ? (
-                    <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-                      isDark ? 'border-gray-600 hover:border-gray-500 bg-[#212121]' : 'border-gray-300 hover:border-gray-400 bg-gray-50'
-                    }`}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        id="floor-plan-upload"
-                      />
-                      <label htmlFor="floor-plan-upload" className="cursor-pointer">
-                        <FileImage size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {t('catalogue.dragDropFloorPlan')}
-                        </p>
-                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {t('catalogue.supportedFormats')}
-                        </p>
-                        <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                          {t('catalogue.browseFiles')}
-                        </button>
-                      </label>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="relative rounded-xl overflow-hidden">
-                        <img 
-                          src={uploadedImage} 
-                          alt="Uploaded floor plan" 
-                          className="w-full h-64 object-cover"
-                        />
-                        <button
-                          onClick={() => setUploadedImage(null)}
-                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                        >
-                          <X size={16} />
-                        </button>
+                          {product.originalPrice && (
+                            <span className={`text-sm line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                              ฿{product.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       
                       <button
-                        onClick={analyzeFloorPlan}
-                        disabled={isAnalyzing}
-                        className={`w-full flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-medium transition-colors ${
-                          isAnalyzing
-                            ? 'bg-gray-400 cursor-not-allowed text-white'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        onClick={() => handleAddToQuotation(product)}
+                        disabled={!product.inStock}
+                        className={`w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                          product.inStock
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-gray-400 cursor-not-allowed text-white'
                         }`}
                       >
-                        <Zap size={20} />
-                        {isAnalyzing ? t('catalogue.analyzing') : t('catalogue.analyzeFloorPlan')}
+                        <ShoppingCart size={16} />
+                        {t('catalogue.addToQuotation')}
                       </button>
                     </div>
-                  )}
-                </div>
-                
-                {/* Analysis Results */}
-                <div>
-                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {t('catalogue.analysisResults')}
-                  </h3>
-                  
-                  {!analysisResult && !isAnalyzing && (
-                    <div className={`p-8 rounded-xl text-center ${
-                      isDark ? 'bg-[#212121]' : 'bg-gray-50'
-                    }`}>
-                      <Calculator size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
-                      <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {t('catalogue.uploadToAnalyze')}
-                      </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {sortedProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className={`flex gap-4 p-4 rounded-xl border transition-colors ${
+                      isDark 
+                        ? 'bg-[#2f2f2f] border-gray-600 hover:bg-gray-600' 
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover" 
+                      />
                     </div>
-                  )}
-                  
-                  {isAnalyzing && (
-                    <div className={`p-8 rounded-xl text-center ${
-                      isDark ? 'bg-[#212121]' : 'bg-gray-50'
-                    }`}>
-                      <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-                      <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {t('catalogue.analyzingFloorPlan')}
-                      </p>
-                      <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {t('catalogue.identifyingProducts')}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {analysisResult && (
-                    <div className="space-y-4">
-                      <div className={`p-4 rounded-xl ${
-                        isDark ? 'bg-green-900/20 border border-green-700' : 'bg-green-50 border border-green-200'
-                      }`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle size={20} className="text-green-600" />
-                          <span className={`font-semibold ${isDark ? 'text-green-400' : 'text-green-700'}`}>
-                            {t('catalogue.analysisComplete')}
-                          </span>
-                        </div>
-                        <p className={`text-sm ${isDark ? 'text-green-300' : 'text-green-600'}`}>
-                          {t('catalogue.detectedProducts', { count: analysisResult.detectedProducts.length })}
-                        </p>
-                      </div>
-                      
-                      <div className={`p-4 rounded-xl ${
-                        isDark ? 'bg-[#212121]' : 'bg-gray-50'
-                      }`}>
-                        <h4 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {t('catalogue.detectedItems')}
-                        </h4>
-                        <div className="space-y-3">
-                          {analysisResult.detectedProducts.map((item: any, index: number) => (
-                            <div key={index} className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <img 
-                                  src={item.product.image} 
-                                  alt={item.product.name}
-                                  className="w-12 h-12 rounded-lg object-cover"
-                                />
-                                <div>
-                                  <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                    {item.product.name}
-                                  </p>
-                                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                    {t('catalogue.quantity')}: {item.quantity} | {t('catalogue.confidence')}: {item.confidence}%
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                  {formatPrice(item.product.price * item.quantity, item.product.currency)}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        <div className={`mt-4 pt-4 border-t ${
-                          isDark ? 'border-gray-600' : 'border-gray-200'
-                        }`}>
-                          <div className="flex justify-between items-center">
-                            <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                              {t('catalogue.totalEstimate')}:
-                            </span>
-                            <span className={`text-xl font-bold text-blue-600`}>
-                              {formatPrice(analysisResult.totalCost, '฿')}
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            {product.name}
+                          </h3>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Star size={14} className="text-yellow-400 fill-current" />
+                            <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                              {product.rating} ({product.reviews} {t('catalogue.reviews')})
                             </span>
                           </div>
                         </div>
                         
-                        <button
-                          onClick={generateQuotation}
-                          className="w-full mt-4 flex items-center justify-center gap-2 py-3 px-6 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
-                        >
-                          <Calculator size={20} />
-                          {t('catalogue.generateQuotation')}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {product.onSale && (
+                            <span className="px-2 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
+                              {t('catalogue.sale')}
+                            </span>
+                          )}
+                          {!product.inStock && (
+                            <span className="px-2 py-1 bg-gray-500 text-white text-xs font-medium rounded-full">
+                              {t('catalogue.outOfStock')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <p className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {product.description}
+                      </p>
+                      
+                      <div className="flex items-center gap-4 text-sm mb-3">
+                        <div>
+                          <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {t('catalogue.dimensions')}: 
+                          </span>
+                          <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                            {product.dimensions}
+                          </span>
+                        </div>
+                        <div>
+                          <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {t('catalogue.materials')}: 
+                          </span>
+                          <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                            {product.materials.join(', ')}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            ฿{product.price.toLocaleString()}
+                          </span>
+                          {product.originalPrice && (
+                            <span className={`text-sm line-through ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                              ฿{product.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <button className={`p-2 rounded-lg transition-colors ${
+                            isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
+                          }`}>
+                            <Heart size={16} />
+                          </button>
+                          <button className={`p-2 rounded-lg transition-colors ${
+                            isDark ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
+                          }`}>
+                            <Eye size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleAddToQuotation(product)}
+                            disabled={!product.inStock}
+                            className={`flex items-center gap-2 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                              product.inStock
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-gray-400 cursor-not-allowed text-white'
+                            }`}
+                          >
+                            <ShoppingCart size={16} />
+                            {t('catalogue.addToQuotation')}
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
+            
+            {sortedProducts.length === 0 && (
+              <div className="text-center py-12">
+                <Package size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                <h3 className={`text-lg font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('catalogue.noProductsFound')}
+                </h3>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('catalogue.tryDifferentSearch')}
+                </p>
+              </div>
+            )}
           </div>
         </div>
-      )}
-      
-      {/* Quotation Confirmation Modal */}
-      {showQuotationModal && selectedProductForQuotation && (
+
+        {/* Right Sidebar - Floor Plan Upload & Analysis */}
+        <div className={`w-96 flex-shrink-0 flex flex-col rounded-xl border ${
+          isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
+        } shadow-lg min-h-0`}>
+          <div className={`p-4 border-b ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+            <h3 className={`text-lg font-semibold flex items-center gap-2 ${
+              isDark ? 'text-white' : 'text-gray-900'
+            }`}>
+              <Upload size={20} />
+              {t('catalogue.uploadFloorPlan')}
+            </h3>
+            <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('catalogue.uploadFloorPlanDesc')}
+            </p>
+          </div>
+          
+          <div className="flex-1 p-4 space-y-4 min-h-0">
+            {!uploadedFile ? (
+              <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+                isDark 
+                  ? 'border-gray-600 hover:border-gray-500 bg-[#212121]' 
+                  : 'border-gray-300 hover:border-gray-400 bg-gray-50'
+              }`}>
+                <FileImage size={48} className={`mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                <h4 className={`text-lg font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('catalogue.dragDropFloorPlan')}
+                </h4>
+                <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('catalogue.supportedFormats')}
+                </p>
+                <input
+                  type="file"
+                  id="floorplan-upload"
+                  className="hidden"
+                  accept=".jpg,.jpeg,.png,.pdf"
+                  onChange={handleFileUpload}
+                />
+                <label
+                  htmlFor="floorplan-upload"
+                  className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors"
+                >
+                  {t('catalogue.browseFiles')}
+                </label>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className={`p-4 rounded-lg border ${
+                  isDark ? 'bg-[#212121] border-gray-600' : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <FileImage size={20} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
+                    <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {uploadedFile.name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleAnalyzeFloorPlan}
+                    disabled={isAnalyzing}
+                    className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                      isAnalyzing
+                        ? 'bg-gray-400 cursor-not-allowed text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {isAnalyzing ? t('catalogue.analyzing') : t('catalogue.analyzeFloorPlan')}
+                  </button>
+                </div>
+
+                {isAnalyzing && (
+                  <div className={`p-4 rounded-lg border ${
+                    isDark ? 'bg-[#212121] border-gray-600' : 'bg-blue-50 border-blue-200'
+                  }`}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="animate-spin w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                      <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {t('catalogue.analyzingFloorPlan')}
+                      </span>
+                    </div>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('catalogue.identifyingProducts')}
+                    </p>
+                  </div>
+                )}
+
+                {analysisResults && (
+                  <div className={`p-4 rounded-lg border ${
+                    isDark ? 'bg-[#212121] border-gray-600' : 'bg-green-50 border-green-200'
+                  }`}>
+                    <h4 className={`font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <CheckCircle size={20} className="text-green-500" />
+                      {t('catalogue.analysisComplete')}
+                    </h4>
+                    <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('catalogue.detectedProducts').replace('{count}', analysisResults.detectedItems.length)}
+                    </p>
+                    
+                    <div className="space-y-3 mb-4">
+                      <h5 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {t('catalogue.detectedItems')}:
+                      </h5>
+                      {analysisResults.detectedItems.map((item: any, index: number) => (
+                        <div key={index} className={`flex justify-between items-center p-2 rounded ${
+                          isDark ? 'bg-gray-700' : 'bg-white'
+                        }`}>
+                          <div>
+                            <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              {item.name}
+                            </span>
+                            <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {t('catalogue.quantity')}: {item.quantity} | {t('catalogue.confidence')}: {item.confidence}%
+                            </div>
+                          </div>
+                          <span className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            ฿{(item.price * item.quantity).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className={`p-3 rounded-lg border-t ${
+                      isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'
+                    }`}>
+                      <div className="flex justify-between items-center mb-3">
+                        <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                          {t('catalogue.totalEstimate')}:
+                        </span>
+                        <span className={`text-xl font-bold text-blue-600`}>
+                          ฿{analysisResults.totalEstimate.toLocaleString()}
+                        </span>
+                      </div>
+                      <button className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                        {t('catalogue.generateQuotation')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {!analysisResults && !isAnalyzing && (
+                  <div className={`p-4 rounded-lg border text-center ${
+                    isDark ? 'bg-[#212121] border-gray-600' : 'bg-gray-50 border-gray-200'
+                  }`}>
+                    <Package size={32} className={`mx-auto mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('catalogue.uploadToAnalyze')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          
+          <div className={`p-4 border-t flex-shrink-0 ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+            <ChatInput
+              message={message}
+              setMessage={setMessage}
+              handleSendMessage={handleSendMessage}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Quotation Modal */}
+      {showQuotationModal && selectedProduct && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
           onClick={() => setShowQuotationModal(false)}
@@ -1093,7 +843,7 @@ const CompanyCataloguePage: React.FC = () => {
                     isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                   }`}
                 >
-                  <X size={20} />
+                  <X size={24} />
                 </button>
               </div>
             </div>
@@ -1101,109 +851,106 @@ const CompanyCataloguePage: React.FC = () => {
             {/* Product Info */}
             <div className="p-6">
               <div className="flex gap-4 mb-6">
-                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
                   <img 
-                    src={selectedProductForQuotation.image} 
-                    alt={selectedProductForQuotation.name}
-                    className="w-full h-full object-cover"
+                    src={selectedProduct.image} 
+                    alt={selectedProduct.name} 
+                    className="w-full h-full object-cover" 
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className={`font-semibold text-lg mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedProductForQuotation.name}
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {selectedProduct.name}
                   </h3>
                   <p className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {formatDimensions(selectedProductForQuotation.dimensions)}
+                    {selectedProduct.dimensions}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {formatPrice(selectedProductForQuotation.price, selectedProductForQuotation.currency)}
-                    </span>
-                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      per unit
-                    </span>
-                  </div>
+                  <p className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    ฿{selectedProduct.price.toLocaleString()} <span className="text-sm font-normal">per unit</span>
+                  </p>
                 </div>
               </div>
-              
-              {/* Quantity Input */}
+
+              {/* Quantity Selector */}
               <div className="mb-6">
                 <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   Quantity
                 </label>
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => setQuotationQuantity(Math.max(1, quotationQuantity - 1))}
-                    className={`w-10 h-10 rounded-lg border flex items-center justify-center transition-colors ${
+                    onClick={() => adjustQuantity(-1)}
+                    className={`p-2 rounded-lg border transition-colors ${
                       isDark 
                         ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
-                        : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                        : 'border-gray-300 hover:bg-gray-100 text-gray-600'
                     }`}
                   >
-                    -
+                    <Minus size={16} />
                   </button>
                   <input
                     type="number"
                     min="1"
                     max="999"
-                    value={quotationQuantity}
-                    onChange={(e) => setQuotationQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className={`flex-1 text-center py-2 px-4 rounded-lg border transition-colors ${
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, Math.min(999, parseInt(e.target.value) || 1)))}
+                    className={`w-20 text-center py-2 px-3 rounded-lg border transition-colors ${
                       isDark 
                         ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
                         : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
                     }`}
                   />
                   <button
-                    onClick={() => setQuotationQuantity(Math.min(999, quotationQuantity + 1))}
-                    className={`w-10 h-10 rounded-lg border flex items-center justify-center transition-colors ${
+                    onClick={() => adjustQuantity(1)}
+                    className={`p-2 rounded-lg border transition-colors ${
                       isDark 
                         ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
-                        : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                        : 'border-gray-300 hover:bg-gray-100 text-gray-600'
                     }`}
                   >
-                    +
+                    <Plus size={16} />
                   </button>
                 </div>
               </div>
-              
-              {/* Total Calculation */}
-              <div className={`p-4 rounded-xl mb-6 ${
-                isDark ? 'bg-[#212121] border border-gray-600' : 'bg-gray-50 border border-gray-200'
+
+              {/* Price Calculation */}
+              <div className={`p-4 rounded-lg border mb-6 ${
+                isDark ? 'bg-[#212121] border-gray-600' : 'bg-blue-50 border-blue-200'
               }`}>
-                <div className="flex justify-between items-center mb-2">
-                  <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Unit Price:
-                  </span>
-                  <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {formatPrice(selectedProductForQuotation.price, selectedProductForQuotation.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Quantity:
-                  </span>
-                  <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {quotationQuantity} {quotationQuantity === 1 ? 'unit' : 'units'}
-                  </span>
-                </div>
-                <div className={`flex justify-between items-center pt-2 border-t ${
-                  isDark ? 'border-gray-600' : 'border-gray-300'
-                }`}>
-                  <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    Total Price:
-                  </span>
-                  <span className={`text-xl font-bold text-blue-600`}>
-                    {formatPrice(selectedProductForQuotation.price * quotationQuantity, selectedProductForQuotation.currency)}
-                  </span>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Unit Price:
+                    </span>
+                    <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      ฿{selectedProduct.price.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Quantity:
+                    </span>
+                    <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {quantity} {quantity === 1 ? 'unit' : 'units'}
+                    </span>
+                  </div>
+                  <div className="border-t pt-2 border-gray-300 dark:border-gray-600">
+                    <div className="flex justify-between">
+                      <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        Total Price:
+                      </span>
+                      <span className="text-xl font-bold text-blue-600">
+                        ฿{(selectedProduct.price * quantity).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              
+
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowQuotationModal(false)}
-                  className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-colors ${
                     isDark
                       ? 'bg-gray-700 hover:bg-gray-600 text-white'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
@@ -1212,8 +959,8 @@ const CompanyCataloguePage: React.FC = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={confirmAddToQuotation}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  onClick={handleConfirmQuotation}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors"
                 >
                   <ShoppingCart size={16} />
                   Add to Quotation
@@ -1223,6 +970,39 @@ const CompanyCataloguePage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-4 right-4 z-50">
+          <div className={`flex items-center gap-3 p-4 rounded-lg shadow-lg border transition-all duration-300 ${
+            isDark 
+              ? 'bg-green-800 border-green-700 text-white' 
+              : 'bg-green-50 border-green-200 text-green-800'
+          }`}>
+            <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
+            <span className="font-medium">{toastMessage}</span>
+            <button
+              onClick={() => setShowToast(false)}
+              className={`p-1 rounded-full transition-colors ${
+                isDark ? 'hover:bg-green-700' : 'hover:bg-green-100'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+      
+      <ExportModal isOpen={showExport} onClose={() => setShowExport(false)} exportType="images" />
+      <DeleteConfirmationModal
+        isOpen={showDelete}
+        onClose={() => setShowDelete(false)}
+        deleteType="images"
+        onConfirm={() => {
+          console.log('Delete products');
+          setShowDelete(false);
+        }}
+      />
     </div>
   );
 };
