@@ -289,6 +289,30 @@ const CompanyCataloguePage: React.FC = () => {
     alert('Quotation generated successfully! Check your downloads folder.');
   };
 
+  const handleAddToQuotation = (product: typeof products[0]) => {
+    setSelectedProductForQuotation(product);
+    setQuotationQuantity(1);
+    setShowQuotationModal(true);
+  };
+
+  const confirmAddToQuotation = () => {
+    if (!selectedProductForQuotation) return;
+    
+    // In a real app, this would add to a quotation state/context
+    console.log('Adding to quotation:', {
+      product: selectedProductForQuotation,
+      quantity: quotationQuantity,
+      total: selectedProductForQuotation.price * quotationQuantity
+    });
+    
+    // Show success message
+    alert(`Added ${quotationQuantity} ${selectedProductForQuotation.name}(s) to quotation!`);
+    
+    // Close modal
+    setShowQuotationModal(false);
+    setSelectedProductForQuotation(null);
+  };
+
   return (
     <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
       <Header />
@@ -503,6 +527,7 @@ const CompanyCataloguePage: React.FC = () => {
                     
                     <div className="flex gap-2">
                       <button
+                        onClick={() => handleAddToQuotation(product)}
                         disabled={!product.inStock}
                         className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                           product.inStock
@@ -627,6 +652,7 @@ const CompanyCataloguePage: React.FC = () => {
                           <Eye size={18} />
                         </button>
                         <button
+                          onClick={() => handleAddToQuotation(product)}
                           disabled={!product.inStock}
                           className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                             product.inStock
@@ -791,6 +817,7 @@ const CompanyCataloguePage: React.FC = () => {
                   {/* Action Buttons */}
                   <div className="flex gap-4">
                     <button
+                      onClick={() => handleAddToQuotation(selectedProduct)}
                       disabled={!selectedProduct.inStock}
                       className={`flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-medium transition-colors ${
                         selectedProduct.inStock
