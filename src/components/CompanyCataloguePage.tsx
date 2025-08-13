@@ -41,6 +41,9 @@ const CompanyCataloguePage: React.FC = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [showQuotationModal, setShowQuotationModal] = useState(false);
+  const [selectedProductForQuotation, setSelectedProductForQuotation] = useState<typeof products[0] | null>(null);
+  const [quotationQuantity, setQuotationQuantity] = useState(1);
 
   const categories = [
     { id: 'all', name: t('catalogue.allProducts'), count: 24 },
@@ -1025,6 +1028,161 @@ const CompanyCataloguePage: React.FC = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Quotation Confirmation Modal */}
+      {showQuotationModal && selectedProductForQuotation && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowQuotationModal(false)}
+        >
+          <div 
+            className={`rounded-2xl shadow-2xl w-full max-w-md ${
+              isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className={`p-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="flex items-center justify-between">
+                <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  Add to Quotation
+                </h2>
+                <button 
+                  onClick={() => setShowQuotationModal(false)} 
+                  className={`p-2 rounded-full transition-colors ${
+                    isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                  }`}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+            
+            {/* Product Info */}
+            <div className="p-6">
+              <div className="flex gap-4 mb-6">
+                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                  <img 
+                    src={selectedProductForQuotation.image} 
+                    alt={selectedProductForQuotation.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className={`font-semibold text-lg mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {selectedProductForQuotation.name}
+                  </h3>
+                  <p className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {formatDimensions(selectedProductForQuotation.dimensions)}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {formatPrice(selectedProductForQuotation.price, selectedProductForQuotation.currency)}
+                    </span>
+                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      per unit
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Quantity Input */}
+              <div className="mb-6">
+                <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Quantity
+                </label>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setQuotationQuantity(Math.max(1, quotationQuantity - 1))}
+                    className={`w-10 h-10 rounded-lg border flex items-center justify-center transition-colors ${
+                      isDark 
+                        ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                        : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    max="999"
+                    value={quotationQuantity}
+                    onChange={(e) => setQuotationQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    className={`flex-1 text-center py-2 px-4 rounded-lg border transition-colors ${
+                      isDark 
+                        ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                        : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                    }`}
+                  />
+                  <button
+                    onClick={() => setQuotationQuantity(Math.min(999, quotationQuantity + 1))}
+                    className={`w-10 h-10 rounded-lg border flex items-center justify-center transition-colors ${
+                      isDark 
+                        ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                        : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              
+              {/* Total Calculation */}
+              <div className={`p-4 rounded-xl mb-6 ${
+                isDark ? 'bg-[#212121] border border-gray-600' : 'bg-gray-50 border border-gray-200'
+              }`}>
+                <div className="flex justify-between items-center mb-2">
+                  <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Unit Price:
+                  </span>
+                  <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {formatPrice(selectedProductForQuotation.price, selectedProductForQuotation.currency)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Quantity:
+                  </span>
+                  <span className={`text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {quotationQuantity} {quotationQuantity === 1 ? 'unit' : 'units'}
+                  </span>
+                </div>
+                <div className={`flex justify-between items-center pt-2 border-t ${
+                  isDark ? 'border-gray-600' : 'border-gray-300'
+                }`}>
+                  <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    Total Price:
+                  </span>
+                  <span className={`text-xl font-bold text-blue-600`}>
+                    {formatPrice(selectedProductForQuotation.price * quotationQuantity, selectedProductForQuotation.currency)}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowQuotationModal(false)}
+                  className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    isDark
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmAddToQuotation}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  <ShoppingCart size={16} />
+                  Add to Quotation
+                </button>
               </div>
             </div>
           </div>
