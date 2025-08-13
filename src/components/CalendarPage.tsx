@@ -45,9 +45,27 @@ const CalendarPage: React.FC = () => {
   const [showEventModal, setShowEventModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'meeting' | 'event' | 'deadline' | 'holiday'>('all');
+  const [events, setEvents] = useState<Event[]>([
+    // ... existing events
+  ]);
+  const [newEvent, setNewEvent] = useState<Omit<Event, 'id'>>({
+    title: '',
+    description: '',
+    date: new Date().toISOString().split('T')[0],
+    startTime: '09:00',
+    endTime: '10:00',
+    type: 'meeting',
+    location: '',
+    attendees: [],
+    organizer: 'Wilson Chen',
+    isRecurring: false,
+    meetingType: 'in-person',
+    priority: 'medium'
+  });
+  const [attendeeInput, setAttendeeInput] = useState('');
 
-  // Sample events data
-  const events: Event[] = [
+  // Move events to state initialization above
+  const initialEvents: Event[] = [
     {
       id: 1,
       title: 'Q4 Board Meeting',
@@ -169,6 +187,57 @@ const CalendarPage: React.FC = () => {
       priority: 'medium'
     }
   ];
+
+  // Initialize events state
+  React.useEffect(() => {
+    setEvents(initialEvents);
+  }, []);
+
+  const handleCreateEvent = () => {
+    if (!newEvent.title.trim()) return;
+    
+    const eventToAdd: Event = {
+      ...newEvent,
+      id: Math.max(...events.map(e => e.id)) + 1,
+    };
+    
+    setEvents(prev => [...prev, eventToAdd]);
+    setShowEventModal(false);
+    
+    // Reset form
+    setNewEvent({
+      title: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0],
+      startTime: '09:00',
+      endTime: '10:00',
+      type: 'meeting',
+      location: '',
+      attendees: [],
+      organizer: 'Wilson Chen',
+      isRecurring: false,
+      meetingType: 'in-person',
+      priority: 'medium'
+    });
+    setAttendeeInput('');
+  };
+
+  const addAttendee = () => {
+    if (attendeeInput.trim() && !newEvent.attendees.includes(attendeeInput.trim())) {
+      setNewEvent(prev => ({
+        ...prev,
+        attendees: [...prev.attendees, attendeeInput.trim()]
+      }));
+      setAttendeeInput('');
+    }
+  };
+
+  const removeAttendee = (attendee: string) => {
+    setNewEvent(prev => ({
+      ...prev,
+      attendees: prev.attendees.filter(a => a !== attendee)
+    }));
+  };
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -646,25 +715,307 @@ const CalendarPage: React.FC = () => {
           onClick={() => setShowEventModal(false)}
         >
           <div 
-            className={`rounded-2xl shadow-2xl w-full max-w-md ${
+            className={`rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden ${
               isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Modal Header */}
             <div className={`p-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-              <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Add New Event
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  Add New Event
+                </h2>
+                <button 
+                  onClick={() => setShowEventModal(false)} 
+                  className={`p-2 rounded-full transition-colors ${
+                    isDark ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                  }`}
+                >
+                  <X size={24} />
+                </button>
+              </div>
             </div>
-            <div className="p-6">
-              <p className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                Event creation form would go here
-              </p>
+            
+            {/* Form Content */}
+            <div className="p-6 max-h-[calc(90vh-160px)] overflow-y-auto">
+              <div className="space-y-6">
+                {/* Event Title */}
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Event Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={newEvent.title}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Enter event title"
+                    className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                      isDark 
+                        ? 'bg-[#212121] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
+                    }`}
+                  />
+                </div>
+
+                {/* Event Type and Priority */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Event Type
+                    </label>
+                    <select
+                      value={newEvent.type}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, type: e.target.value as Event['type'] }))}
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                      }`}
+                    >
+                      <option value="meeting">Meeting</option>
+                      <option value="event">Event</option>
+                      <option value="deadline">Deadline</option>
+                      <option value="holiday">Holiday</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Priority
+                    </label>
+                    <select
+                      value={newEvent.priority}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, priority: e.target.value as Event['priority'] }))}
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                      }`}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Date and Time */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={newEvent.date}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, date: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                      }`}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Start Time
+                    </label>
+                    <input
+                      type="time"
+                      value={newEvent.startTime}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, startTime: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                      }`}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      End Time
+                    </label>
+                    <input
+                      type="time"
+                      value={newEvent.endTime}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, endTime: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                {/* Location and Meeting Type */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={newEvent.location}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
+                      placeholder="Enter location or meeting link"
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
+                      }`}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Meeting Type
+                    </label>
+                    <select
+                      value={newEvent.meetingType}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, meetingType: e.target.value as Event['meetingType'] }))}
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+                      }`}
+                    >
+                      <option value="in-person">In Person</option>
+                      <option value="video">Video Call</option>
+                      <option value="phone">Phone Call</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Description
+                  </label>
+                  <textarea
+                    value={newEvent.description}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Enter event description"
+                    rows={3}
+                    className={`w-full px-4 py-3 rounded-lg border transition-colors resize-none ${
+                      isDark 
+                        ? 'bg-[#212121] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
+                    }`}
+                  />
+                </div>
+
+                {/* Organizer */}
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Organizer
+                  </label>
+                  <input
+                    type="text"
+                    value={newEvent.organizer}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, organizer: e.target.value }))}
+                    placeholder="Enter organizer name"
+                    className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                      isDark 
+                        ? 'bg-[#212121] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
+                    }`}
+                  />
+                </div>
+
+                {/* Attendees */}
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Attendees
+                  </label>
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      type="text"
+                      value={attendeeInput}
+                      onChange={(e) => setAttendeeInput(e.target.value)}
+                      placeholder="Enter attendee name"
+                      onKeyPress={(e) => e.key === 'Enter' && addAttendee()}
+                      className={`flex-1 px-4 py-3 rounded-lg border transition-colors ${
+                        isDark 
+                          ? 'bg-[#212121] border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' 
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500'
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={addAttendee}
+                      className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  
+                  {/* Attendee List */}
+                  {newEvent.attendees.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {newEvent.attendees.map((attendee, index) => (
+                        <span
+                          key={index}
+                          className={`flex items-center gap-2 px-3 py-1 text-sm rounded-full ${
+                            isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {attendee}
+                          <button
+                            onClick={() => removeAttendee(attendee)}
+                            className={`hover:text-red-500 transition-colors`}
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Recurring Event */}
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="recurring"
+                    checked={newEvent.isRecurring}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, isRecurring: e.target.checked }))}
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="recurring" className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    This is a recurring event
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className={`flex justify-end gap-3 p-6 border-t ${
+              isDark ? 'border-gray-700' : 'border-gray-200'
+            }`}>
               <button
                 onClick={() => setShowEventModal(false)}
-                className="w-full mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className={`px-6 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  isDark
+                    ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                }`}
               >
-                Close
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateEvent}
+                disabled={!newEvent.title.trim()}
+                className={`px-8 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  newEvent.title.trim()
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-gray-400 cursor-not-allowed text-white'
+                }`}
+              >
+                Create Event
               </button>
             </div>
           </div>
