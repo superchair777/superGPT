@@ -372,6 +372,221 @@ const CalendarPage: React.FC = () => {
     return days;
   };
 
+  const renderWeekView = () => {
+    const startOfWeek = new Date(currentDate);
+    const day = startOfWeek.getDay();
+    startOfWeek.setDate(currentDate.getDate() - day);
+
+    const weekDays = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + i);
+      weekDays.push(date);
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+
+    return (
+      <div className="grid grid-cols-7 min-h-0">
+        {weekDays.map((date, index) => {
+          const dateString = date.toISOString().split('T')[0];
+          const dayEvents = getEventsForDate(dateString);
+          const isToday = dateString === today;
+
+          return (
+            <div
+              key={index}
+              className={`min-h-96 border border-gray-200 dark:border-gray-700 p-3 ${
+                isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+              }`}
+            >
+              <div className={`text-center mb-3 ${
+                isToday 
+                  ? 'text-blue-600 dark:text-blue-400' 
+                  : isDark ? 'text-white' : 'text-gray-900'
+              }`}>
+                <div className="text-xs font-medium">
+                  {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                </div>
+                <div className={`text-lg font-bold ${
+                  isToday ? 'bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mt-1' : ''
+                }`}>
+                  {date.getDate()}
+                </div>
+              </div>
+              <div className="space-y-2 overflow-y-auto max-h-80">
+                {dayEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    onClick={() => setSelectedEvent(event)}
+                    className={`text-xs p-2 rounded cursor-pointer transition-colors ${
+                      getEventTypeColor(event.type)
+                    } text-white hover:opacity-80`}
+                  >
+                    <div className="font-medium truncate">{event.title}</div>
+                    <div className="opacity-75 mt-1">
+                      {event.startTime} - {event.endTime}
+                    </div>
+                    <div className="flex items-center gap-1 mt-1 opacity-75">
+                      {getMeetingTypeIcon(event.meetingType)}
+                      <span className="truncate text-xs">{event.location}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderDayView = () => {
+    const dateString = currentDate.toISOString().split('T')[0];
+    const dayEvents = getEventsForDate(dateString).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = dateString === today;
+
+    // Generate time slots (24 hours)
+    const timeSlots = [];
+    for (let hour = 0; hour < 24; hour++) {
+      timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+    }
+
+    return (
+      <div className="flex">
+        {/* Time column */}
+        <div className="w-20 flex-shrink-0">
+          <div className="h-16 border-b border-gray-200 dark:border-gray-700"></div>
+          {timeSlots.map((time) => (
+            <div
+              key={time}
+              className={`h-16 border-b border-gray-200 dark:border-gray-700 flex items-start justify-end pr-2 pt-1 text-xs ${
+                isDark ? 'text-gray-400' : 'text-gray-600'
+              }`}
+            >
+              {time}
+            </div>
+          ))}
+        </div>
+
+        {/* Day column */}
+        <div className="flex-1 relative">
+          {/* Day header */}
+          <div className={`h-16 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center ${
+            isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+          }`}>
+            <div className={`text-center ${
+              isToday 
+                ? 'text-blue-600 dark:text-blue-400' 
+                : isDark ? 'text-white' : 'text-gray-900'
+            }`}>
+              <div className="text-sm font-medium">
+                {currentDate.toLocaleDateString('en-US', { weekday: 'long' })}
+              </div>
+              <div className={`text-2xl font-bold ${
+                isToday ? 'bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mt-1' : ''
+              }`}>
+                {currentDate.getDate()}
+              </div>
+            </div>
+          </div>
+
+          {/* Time grid */}
+          {timeSlots.map((time) => (
+            <div
+              key={time}
+              className="h-16 border-b border-gray-200 dark:border-gray-700 relative"
+            ></div>
+          ))}
+
+          {/* Events overlay */}
+          <div className="absolute top-16 left-0 right-0">
+            {dayEvents.map((event) => {
+              const startHour = parseInt(event.startTime.split(':')[0]);
+              const startMinute = parseInt(event.startTime.split(':')[1]);
+              const endHour = parseInt(event.endTime.split(':')[0]);
+              const endMinute = parseInt(event.endTime.split(':')[1]);
+              
+              const startPosition = (startHour * 64) + (startMinute * 64 / 60);
+              const duration = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) * 64 / 60;
+
+              return (
+                <div
+                  key={event.id}
+                  onClick={() => setSelectedEvent(event)}
+                  className={`absolute left-1 right-1 rounded cursor-pointer transition-colors ${
+                    getEventTypeColor(event.type)
+                  } text-white hover:opacity-80 p-2`}
+                  style={{
+                    top: `${startPosition}px`,
+                    height: `${Math.max(duration, 32)}px`,
+                  }}
+                >
+                  <div className="font-medium text-sm truncate">{event.title}</div>
+                  <div className="text-xs opacity-75 truncate">
+                    {event.startTime} - {event.endTime}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs opacity-75 truncate">
+                    {getMeetingTypeIcon(event.meetingType)}
+                    <span>{event.location}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const navigateDate = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      if (viewMode === 'month') {
+        if (direction === 'prev') {
+          newDate.setMonth(prev.getMonth() - 1);
+        } else {
+          newDate.setMonth(prev.getMonth() + 1);
+        }
+      } else if (viewMode === 'week') {
+        if (direction === 'prev') {
+          newDate.setDate(prev.getDate() - 7);
+        } else {
+          newDate.setDate(prev.getDate() + 7);
+        }
+      } else if (viewMode === 'day') {
+        if (direction === 'prev') {
+          newDate.setDate(prev.getDate() - 1);
+        } else {
+          newDate.setDate(prev.getDate() + 1);
+        }
+      }
+      return newDate;
+    });
+  };
+
+  const getViewTitle = () => {
+    if (viewMode === 'month') {
+      return formatDate(currentDate);
+    } else if (viewMode === 'week') {
+      const startOfWeek = new Date(currentDate);
+      const day = startOfWeek.getDay();
+      startOfWeek.setDate(currentDate.getDate() - day);
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      
+      return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    } else {
+      return currentDate.toLocaleDateString('en-US', { 
+        weekday: 'long',
+        year: 'numeric', 
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+  };
+
   return (
     <div className={`flex-1 flex flex-col h-full ${isDark ? 'bg-[#212121]' : 'bg-white'}`}>
       <Header />
@@ -446,7 +661,7 @@ const CalendarPage: React.FC = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigateMonth('prev')}
+              onClick={() => navigateDate('prev')}
               className={`p-2 rounded-lg transition-colors ${
                 isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
               }`}
@@ -454,10 +669,10 @@ const CalendarPage: React.FC = () => {
               <ChevronLeft size={20} />
             </button>
             <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {formatDate(currentDate)}
+              {getViewTitle()}
             </h2>
             <button
-              onClick={() => navigateMonth('next')}
+              onClick={() => navigateDate('next')}
               className={`p-2 rounded-lg transition-colors ${
                 isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
               }`}
@@ -489,26 +704,57 @@ const CalendarPage: React.FC = () => {
         <div className={`rounded-xl border overflow-visible ${
           isDark ? 'bg-[#2f2f2f] border-gray-600' : 'bg-white border-gray-200'
         }`}>
-          {/* Days of week header */}
-          <div className="grid grid-cols-7">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-              <div
-                key={day}
-                className={`p-4 text-center font-medium border-b ${
-                  isDark 
-                    ? 'bg-gray-700 text-gray-300 border-gray-600' 
-                    : 'bg-gray-50 text-gray-700 border-gray-200'
-                }`}
-              >
-                {day}
+          {viewMode === 'month' && (
+            <>
+              {/* Days of week header */}
+              <div className="grid grid-cols-7">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                  <div
+                    key={day}
+                    className={`p-4 text-center font-medium border-b ${
+                      isDark 
+                        ? 'bg-gray-700 text-gray-300 border-gray-600' 
+                        : 'bg-gray-50 text-gray-700 border-gray-200'
+                    }`}
+                  >
+                    {day}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          
-          {/* Calendar days */}
-          <div className="grid grid-cols-7 min-h-0">
-            {renderCalendarGrid()}
-          </div>
+              
+              {/* Calendar days */}
+              <div className="grid grid-cols-7 min-h-0">
+                {renderCalendarGrid()}
+              </div>
+            </>
+          )}
+
+          {viewMode === 'week' && (
+            <>
+              {/* Days of week header */}
+              <div className="grid grid-cols-7">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                  <div
+                    key={day}
+                    className={`p-4 text-center font-medium border-b ${
+                      isDark 
+                        ? 'bg-gray-700 text-gray-300 border-gray-600' 
+                        : 'bg-gray-50 text-gray-700 border-gray-200'
+                    }`}
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+              {renderWeekView()}
+            </>
+          )}
+
+          {viewMode === 'day' && (
+            <div className="overflow-y-auto max-h-96">
+              {renderDayView()}
+            </div>
+          )}
         </div>
       </div>
 
