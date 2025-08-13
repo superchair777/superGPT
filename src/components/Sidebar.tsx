@@ -19,7 +19,8 @@ import {
   Box,
   Building2,
   Users,
-  Trash2
+  Trash2,
+  Calendar
 } from 'lucide-react';
 
 interface SidebarProps {

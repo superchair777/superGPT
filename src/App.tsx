@@ -14,6 +14,7 @@ import FloorPlanPage from './components/FloorPlanPage';
 import ThreeDRendersPage from './components/ThreeDRendersPage';
 import CompanyCataloguePage from './components/CompanyCataloguePage';
 import ClientsListPage from './components/ClientsListPage';
+import CalendarPage from './components/CalendarPage';
 
 const MainContent: React.FC<{ sidebarOpen: boolean }> = ({ sidebarOpen }) => {
   const { activeView } = useView();
