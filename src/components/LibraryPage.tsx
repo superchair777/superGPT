@@ -539,7 +539,7 @@ const LibraryPage: React.FC = () => {
               message={message}
               setMessage={setMessage}
               handleSendMessage={handleSendMessage}
-              isLoading={isLoading || isGeneratingImage}
+             isLoading={isLoading}
             />
           </div>
         </div>
