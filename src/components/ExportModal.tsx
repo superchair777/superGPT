@@ -1,0 +1,62 @@
+import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { FileText, Code, FileJson, X } from 'lucide-react';
+
+interface ExportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  exportType?: 'chat' | 'images';
+}
+
+const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, exportType = 'chat' }) => {
+  const { isDark } = useTheme();
+  const { t } = useLanguage();
+
+  const chatExportOptions = [
+    { icon: FileText, label: 'PDF' },
+    { icon: Code, label: 'TXT' },
+    { icon: FileJson, label: 'JSON' },
+  ];
+
+  const imageExportOptions = [
+    { icon: FileText, label: 'PNG' },
+    { icon: Code, label: 'JPG' },
+    { icon: FileJson, label: 'SVG' },
+    { icon: FileText, label: 'WEBP' },
+  ];
+
+  const exportOptions = exportType === 'images' ? imageExportOptions : chatExportOptions;
+  const modalTitle = exportType === 'images' ? t('export.imagesTitle') : t('export.title');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center" onClick={onClose}>
+      <div 
+        className={`p-6 rounded-2xl shadow-2xl w-full max-w-sm mx-4 ${isDark ? 'bg-[#2f2f2f] border border-gray-700' : 'bg-white border'}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{modalTitle}</h2>
+          <button onClick={onClose} className={`p-1 rounded-full ${isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}>
+            <X size={20} />
+          </button>
+        </div>
+        <div className={`grid gap-4 ${exportType === 'images' ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-1 sm:grid-cols-3'}`}>
+          {exportOptions.map((option, index) => (
+            <button
+              key={index}
+              className={`flex flex-col items-center justify-center p-4 rounded-lg transition-colors ${isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'}`}
+            >
+              <option.icon size={32} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
+              <span className={`mt-2 text-sm font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>{option.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ExportModal;
