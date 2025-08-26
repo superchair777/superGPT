@@ -48,8 +48,8 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <UserProvider>
-          <NotificationProvider>
+        <NotificationProvider>
+          <UserProvider>
             <TaskProvider>
               <ChatProvider>
                 <ViewProvider>
@@ -71,8 +71,8 @@ function App() {
                 </ViewProvider>
               </ChatProvider>
             </TaskProvider>
-          </NotificationProvider>
-        </UserProvider>
+          </UserProvider>
+        </NotificationProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
