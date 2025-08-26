@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { imageGenerationService } from './imageGenerationService';
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
@@ -13,30 +14,14 @@ export class GeminiService {
   }
 
   async generateImage(prompt: string): Promise<string> {
-    if (!this.apiKey || this.apiKey === 'your_gemini_api_key_here' || this.apiKey.trim() === '') {
-      throw new Error("Please configure your Gemini API key in the .env file. Get your API key from https://aistudio.google.com/app/apikey");
-    }
-
     try {
-      // Use Gemini's image generation capabilities
-      const imageModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      
-      // For now, we'll generate a placeholder response since Gemini doesn't directly generate images
-      // In a real implementation, you'd use a service like DALL-E, Midjourney, or Stable Diffusion
-      const enhancedPrompt = `Create a detailed description for generating an image: ${prompt}. Make it vivid and specific for image generation.`;
-      
-      const result = await imageModel.generateContent(enhancedPrompt);
-      const response = await result.response;
-      const description = response.text();
-      
-      // For demonstration, we'll return a placeholder image URL
-      // In production, you'd integrate with an actual image generation service
-      const imageUrl = this.generatePlaceholderImage(prompt);
-      
-      return imageUrl;
+      // Use the dedicated image generation service
+      return await imageGenerationService.generateImage(prompt);
     } catch (error) {
       console.error('Image generation error:', error);
-      throw new Error('Failed to generate image. Please try again.');
+      // Fallback to placeholder if real generation fails
+      console.log('Falling back to placeholder image');
+      return imageGenerationService.generatePlaceholderImage(prompt);
     }
   }
 
