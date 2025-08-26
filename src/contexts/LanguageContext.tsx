@@ -649,6 +649,7 @@ const translations = {
     'library.photos': 'รูปถ่าย',
     'library.icons': 'ไอคอน',
     'library.favorites': 'รายการโปรด',
+    'library.generated': 'สร้างแล้ว',
     'library.noImagesFound': 'ไม่พบรูปภาพ',
     'library.noImagesDesc': 'ลองปรับการค้นหาหรือตัวกรอง หรือสร้างรูปภาพใหม่โดยใช้แชทด้านล่าง',
     'library.startCreating': 'เริ่มสร้างรูปภาพที่น่าทึ่งด้วย AI',

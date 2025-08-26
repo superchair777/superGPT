@@ -12,6 +12,54 @@ export class GeminiService {
     this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   }
 
+  async generateImage(prompt: string): Promise<string> {
+    if (!this.apiKey || this.apiKey === 'your_gemini_api_key_here' || this.apiKey.trim() === '') {
+      throw new Error("Please configure your Gemini API key in the .env file. Get your API key from https://aistudio.google.com/app/apikey");
+    }
+
+    try {
+      // Use Gemini's image generation capabilities
+      const imageModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      
+      // For now, we'll generate a placeholder response since Gemini doesn't directly generate images
+      // In a real implementation, you'd use a service like DALL-E, Midjourney, or Stable Diffusion
+      const enhancedPrompt = `Create a detailed description for generating an image: ${prompt}. Make it vivid and specific for image generation.`;
+      
+      const result = await imageModel.generateContent(enhancedPrompt);
+      const response = await result.response;
+      const description = response.text();
+      
+      // For demonstration, we'll return a placeholder image URL
+      // In production, you'd integrate with an actual image generation service
+      const imageUrl = this.generatePlaceholderImage(prompt);
+      
+      return imageUrl;
+    } catch (error) {
+      console.error('Image generation error:', error);
+      throw new Error('Failed to generate image. Please try again.');
+    }
+  }
+
+  private generatePlaceholderImage(prompt: string): string {
+    // Generate a unique placeholder image based on the prompt
+    const hash = this.simpleHash(prompt);
+    const colors = ['FF6B6B', '4ECDC4', '45B7D1', '96CEB4', 'FFEAA7', 'DDA0DD', 'FFB6C1', '87CEEB'];
+    const color = colors[hash % colors.length];
+    
+    // Create a placeholder image URL with the prompt text
+    const encodedPrompt = encodeURIComponent(prompt.substring(0, 50));
+    return `https://via.placeholder.com/400x400/${color}/FFFFFF?text=${encodedPrompt}`;
+  }
+
+  private simpleHash(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash);
+  }
   async generateResponse(message: string, context?: string): Promise<string> {
     try {
       // Add context if provided (for different pages)
