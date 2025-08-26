@@ -32,6 +32,10 @@ export class GeminiService {
     chatHistory: Array<{text: string, sender: 'user' | 'bot'}>,
     context?: string
   ): Promise<string> {
+    if (!this.apiKey || this.apiKey === 'your_gemini_api_key_here') {
+      return "Please configure your Gemini API key in the .env file. Get your API key from https://aistudio.google.com/app/apikey";
+    }
+    
     try {
       // Build conversation history for context
       const historyText = chatHistory
