@@ -459,6 +459,7 @@ const translations = {
     'sidebar.companyCatalogue': 'แคตตาล็อกบริษัท',
     'sidebar.clientsList': 'รายชื่อลูกค้า',
     'sidebar.calendar': 'ปฏิทิน',
+    'sidebar.calendar': 'ปฏิทิน',
     'sidebar.chats': 'แชท',
     'sidebar.userStatus': 'ฟรี',
     
