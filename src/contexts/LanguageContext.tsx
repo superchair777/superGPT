@@ -648,6 +648,7 @@ const translations = {
     'library.illustrations': 'ภาพประกอบ',
     'library.photos': 'รูปถ่าย',
     'library.icons': 'ไอคอน',
+    'library.generated': 'สร้างแล้ว',
     'library.favorites': 'รายการโปรด',
     'library.generated': 'สร้างแล้ว',
     'library.noImagesFound': 'ไม่พบรูปภาพ',

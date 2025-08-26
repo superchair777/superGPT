@@ -3,6 +3,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useChat } from '../contexts/ChatContext';
 import { geminiService } from '../services/geminiService';
+import { imageGenerationService } from '../services/imageGenerationService';
 import Header from './Header';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
@@ -127,7 +128,10 @@ const LibraryPage: React.FC = () => {
   ];
 
   const filteredImages = images.filter(image => {
-    const matchesCategory = selectedCategory === 'all' || image.category === selectedCategory || (selectedCategory === 'favorites' && image.favorite);
+    const matchesCategory = selectedCategory === 'all' || 
+                           image.category === selectedCategory || 
+                           (selectedCategory === 'favorites' && image.favorite) ||
+                           (selectedCategory === 'generated' && image.category === 'generated');
     const matchesSearch = image.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          image.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
